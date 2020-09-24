@@ -1,0 +1,10 @@
+.Menu {
+    width: 200px;
+    height: 600px;
+    float: left;
+    position: relative;
+    padding: 0;
+    background-color: #111111;
+    z-index: 3;
+    box-shadow: 3px 0 10px black;
+}

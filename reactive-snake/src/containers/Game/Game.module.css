@@ -1,0 +1,20 @@
+.Game {
+    display: grid;
+    float: left;
+    width: 600px;
+    height: 600px;
+    grid-template: 1fr / 1fr;
+}
+
+.Game > * {
+    grid-column: 1 / 1;
+    grid-row: 1 / 1;
+}
+
+.Game .Below {
+    z-index: 2;
+}
+
+.Game .Top {
+    z-index: 1;
+}

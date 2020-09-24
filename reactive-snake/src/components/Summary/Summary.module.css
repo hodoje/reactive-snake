@@ -1,0 +1,38 @@
+.Summary {
+    height: 600px;
+    width: 600px;
+    background-color: rgba(25,25,25,0.85);
+    padding: 0;    
+    transform: translateX(-100%);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 2;
+    will-change: transform;
+}
+
+.Summary-Slide-Out {
+    -webkit-animation: left-to-right .75s ease-in-out forwards;
+    animation: left-to-right .75s ease-in-out forwards;
+    -webkit-animation-delay: .1s;
+    animation-delay: .1s;
+}
+
+@keyframes left-to-right{
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@-webkit-keyframes left-to-right{
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
