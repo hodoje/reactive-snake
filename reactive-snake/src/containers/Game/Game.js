@@ -5,7 +5,7 @@ import classes from './Game.module.css';
 import Snake from '../../containers/Snake/Snake';
 import Summary from '../../components/Summary/Summary';
 
-const game = () => {
+const Game = () => {
     return (
         <div className={classes.Game}>
             <Summary/>
@@ -14,4 +14,4 @@ const game = () => {
     );
 };
 
-export default game;
+export default Game;

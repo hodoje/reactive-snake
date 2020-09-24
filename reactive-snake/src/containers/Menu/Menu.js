@@ -2,7 +2,7 @@ import React from 'react';
 
 import classes from './Menu.module.css';
 
-const menu = () => {
+const Menu = () => {
     return (
         <div className={classes.Menu}>
             
@@ -10,4 +10,4 @@ const menu = () => {
     )
 }
 
-export default menu;
+export default Menu;

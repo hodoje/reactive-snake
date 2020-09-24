@@ -2,7 +2,7 @@ import React from 'react';
 
 import classes from './Snake.module.css';
 
-const snake = () => {
+const Snake = () => {
     return (
         <div className={classes.Snake}>
             <h1 style={{textAlign: 'center', color: 'white'}}>Test</h1>
@@ -10,4 +10,4 @@ const snake = () => {
     );
 };
 
-export default snake;
+export default Snake;

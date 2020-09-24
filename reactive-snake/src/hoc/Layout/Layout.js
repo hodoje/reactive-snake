@@ -4,7 +4,7 @@ import classes from './Layout.module.css';
 import Menu from '../../containers/Menu/Menu';
 import Game from '../../containers/Game/Game';
 
-const layout = () => {
+const Layout = () => {
     return (
         <div className={classes.Layout}>
             <Menu/>
@@ -13,4 +13,4 @@ const layout = () => {
     );
 };
 
-export default layout;
+export default Layout;
