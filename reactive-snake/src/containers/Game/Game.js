@@ -8,8 +8,8 @@ import Summary from '../../components/Summary/Summary';
 const game = () => {
     return (
         <div className={classes.Game}>
-            <Summary positionClass={classes.Top}/>
-            <Snake positionClass={classes.Bottom}/>
+            <Summary/>
+            <Snake/>
         </div>
     );
 };
