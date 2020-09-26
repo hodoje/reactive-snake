@@ -7,4 +7,23 @@
     background-color: #111111;
     z-index: 3;
     box-shadow: inset 0px 0px 50px 0px rgba(0,0,0,1);
+    display: flex;
+    justify-content: center;
+}
+
+.Menu .Button {
+    display: block;
+    width: 48px;
+    height: 48px;   
+    margin-top: 480px;
+    color: white;
+}
+
+.Menu .Button:hover {
+    color: #93FF19;
+}
+
+.Menu .Button:active {
+    color: #57a300;
+    transform: scale(0.85);
 }
