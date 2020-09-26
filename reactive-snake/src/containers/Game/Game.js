@@ -8,7 +8,7 @@ import Summary from '../../components/Summary/Summary';
 const Game = () => {
     return (
         <div className={classes.Game}>
-            <Summary/>
+            {/* <Summary/> */}
             <Snake/>
         </div>
     );

@@ -5,4 +5,5 @@
     height: 600px;
     background-color: #333333;
     z-index: 1;
+    box-shadow: inset 0px 0px 50px 0px rgba(0,0,0,1);
 }
