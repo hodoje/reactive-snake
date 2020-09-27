@@ -1,4 +1,4 @@
-import { keyboard, distance } from '../../shared/utility';
+import { keyboard } from '../../shared/utility';
 import Point from './point';
 
 export default class SnakeClass {
@@ -7,7 +7,13 @@ export default class SnakeClass {
         this.y = 0;
         // initial state is that the snake moves to the right
         this.direction = keyboard.keys.RIGHT_ARROW;
-        this.dx = 1;
+        // we use this field to check if we can move
+        // we use this since we use event listener for 'keydown'
+        // and event handler can get invoked before checks in the
+        // snakeGameLifecycle method inside Snake.js
+        // effectively letting us go in reverse when there are 0 or 1 elements in the tail
+        this.lastKnownDirection = this.direction;
+        this.dx = 0;
         this.dy = 0;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
@@ -16,29 +22,36 @@ export default class SnakeClass {
         this.length = 0;
         // tracks the history of snake's movement (if it has eaten any food)
         this.tail = [];
+        this.isDead = false;
     }
 
     update = () => {
-        // shift only if a food has been eaten
-        if (this.length === this.tail.length) {
-            // shift all tail parts
-            this.tail.shift();
-        }
-        // add latest previous position of the head
-        this.tail[this.length - 1] = new Point(this.x, this.y);
+        if (!this.isDead) {
+            // shift only if a food has been eaten
+            if (this.length === this.tail.length) {
+                // shift all tail parts
+                this.tail.shift();
+            }
+            // add latest previous position of the head
+            this.tail[this.length - 1] = new Point(this.x, this.y);
 
-        // move grid cell by grid cell
-        const newX = this.x + this.dx * this.scale;
-        const newY = this.y + this.dy * this.scale;
+            // move grid cell by grid cell
+            const newX = this.x + this.dx * this.scale;
+            const newY = this.y + this.dy * this.scale;
 
-        // check if in bounds left and right
-        if (newX >= 0 && newX <= this.canvasWidth - this.scale) {
-            this.x = newX;
-        }
+            // check if in bounds left and right
+            if (newX >= 0 && newX <= this.canvasWidth - this.scale) {
+                this.x = newX;
+            }
 
-        // check if in bounds up and down
-        if (newY >= 0 && newY <= this.canvasHeight - this.scale) {
-            this.y = newY;
+            // check if in bounds up and down
+            if (newY >= 0 && newY <= this.canvasHeight - this.scale) {
+                this.y = newY;
+            }
+
+            // update last known position only after update
+            // which will technically be a new canvas frame
+            this.setLastKnownDirection();
         }
     }
 
@@ -57,47 +70,49 @@ export default class SnakeClass {
     }
 
     getDirection = (event) => {
-        const key = event.keyCode;
-        switch(key) {
-            case keyboard.keys.UP_ARROW:
-                this.setDirection(0, -1, key);
-                break;
-            case keyboard.keys.DOWN_ARROW:
-                this.setDirection(0, 1, key);
-                break;
-            case keyboard.keys.LEFT_ARROW:
-                this.setDirection(-1, 0, key);
-                break;
-            case keyboard.keys.RIGHT_ARROW:
-                this.setDirection(1, 0, key);
-                break;
-            default:
-                break;
+        if (!this.isDead) {
+            const key = event.keyCode;
+            switch(key) {
+                case keyboard.keys.UP_ARROW:
+                    this.setDirection(0, -1, key);
+                    break;
+                case keyboard.keys.DOWN_ARROW:
+                    this.setDirection(0, 1, key);
+                    break;
+                case keyboard.keys.LEFT_ARROW:
+                    this.setDirection(-1, 0, key);
+                    break;
+                case keyboard.keys.RIGHT_ARROW:
+                    this.setDirection(1, 0, key);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    setDirection = (x, y, newDirection) => {
+    setDirection = (dx, dy, newDirection) => {
         // restricting movement in opposite direction
         let canMove = true;
 
         switch(newDirection) {
             case keyboard.keys.UP_ARROW:
-                if (this.direction === keyboard.keys.DOWN_ARROW) {
+                if (this.lastKnownDirection === keyboard.keys.DOWN_ARROW) {
                     canMove = false;
                 }
                 break;
             case keyboard.keys.DOWN_ARROW:
-                if (this.direction === keyboard.keys.UP_ARROW) {
+                if (this.lastKnownDirection === keyboard.keys.UP_ARROW) {
                     canMove = false;
                 }
                 break;
             case keyboard.keys.LEFT_ARROW:
-                if (this.direction === keyboard.keys.RIGHT_ARROW) {
+                if (this.lastKnownDirection === keyboard.keys.RIGHT_ARROW) {
                     canMove = false;
                 }
                 break;
             case keyboard.keys.RIGHT_ARROW:
-                if (this.direction === keyboard.keys.LEFT_ARROW) {
+                if (this.lastKnownDirection === keyboard.keys.LEFT_ARROW) {
                     canMove = false;
                 }
                 break;
@@ -107,14 +122,13 @@ export default class SnakeClass {
 
         if (canMove) {
             this.direction = newDirection;
-            this.dx = x;
-            this.dy = y;
+            this.dx = dx;
+            this.dy = dy;
         }
     }
 
     eat = (food) => {
-        let dist = distance(this.x, this.y, food.x, food.y);
-        if (dist < 1) {
+        if (this.x === food.x && this.y === food.y) {
             this.grow();
             return true;
         }
@@ -130,24 +144,45 @@ export default class SnakeClass {
     death = () => {
         let isDead = false;
                 
+        let x = this.x + this.dx * this.scale;
+        let y = this.y + this.dy * this.scale;
+
         // check if future snake pos is out of bounds
-        if (this.x + this.scale === this.canvasWidth || this.x + this.dx === -1 ||
-            this.y + this.scale === this.canvasHeight || this.y + this.dy === -1) {
+        if (x < 0 || x >= this.canvasWidth ||
+            y < 0 || y >= this.canvasHeight) {
             isDead = true;
         }
 
         // check if snake ate itself
         for (let i = 0; i < this.tail.length; i++) {
             let pos = this.tail[i];
-            let dist = distance(this.x, this.y, pos.x, pos.y);
-            if (dist < 1) {
-                // this.length = 0;
-                // this.tail = [];
+            if (this.x === pos.x && this.y === pos.y) {
                 isDead = true;
                 break;
             }
         }
 
+        if (this.isDead !== isDead) {
+            this.isDead = isDead;
+        }
         return isDead;
+    }
+
+    resurrect = () => {
+        this.isDead = false;
+        this.length = 0;
+        this.tail = [];
+    }
+
+    getSnakeHead = () => {
+        return new Point(this.x, this.y);
+    }
+
+    getSnakeLength = () => {
+        return this.length;
+    }
+
+    setLastKnownDirection = () => {
+        this.lastKnownDirection = this.direction;
     }
 }
