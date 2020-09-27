@@ -1,4 +1,5 @@
-import { keyboard } from '../../shared/utility';
+import { keyboard } from './utility';
+import { figureStyles } from './gameSettings';
 import Point from './point';
 
 export default class SnakeClass {
@@ -13,7 +14,7 @@ export default class SnakeClass {
         // snakeGameLifecycle method inside Snake.js
         // effectively letting us go in reverse when there are 0 or 1 elements in the tail
         this.lastKnownDirection = this.direction;
-        this.dx = 0;
+        this.dx = 1;
         this.dy = 0;
         this.canvasWidth = canvasWidth;
         this.canvasHeight = canvasHeight;
@@ -57,15 +58,15 @@ export default class SnakeClass {
 
     show = (ctx) => {
         // draw the tail
-        ctx.strokeStyle = 'black';
-        ctx.fillStyle = 'white';
+        
+        ctx.fillStyle = figureStyles.body.fill;
         for (let i = 0; i < this.tail.length; i++) {
-            ctx.strokeRect(this.tail[i].x, this.tail[i].y, this.scale, this.scale);
+        
             ctx.fillRect(this.tail[i].x, this.tail[i].y, this.scale, this.scale);
         }
 
-        // draw the head
-        ctx.fillStyle = '#93FF19';
+        // draw the head        
+        ctx.fillStyle = figureStyles.head.fill;        
         ctx.fillRect(this.x, this.y, this.scale, this.scale);
     }
 
@@ -127,9 +128,10 @@ export default class SnakeClass {
         }
     }
 
-    eat = (food) => {
+    eat = (food, eatFood) => {
         if (this.x === food.x && this.y === food.y) {
             this.grow();
+            eatFood();
             return true;
         }
         else {
@@ -141,37 +143,65 @@ export default class SnakeClass {
         this.length++;
     }
 
-    death = () => {
-        let isDead = false;
-                
-        let x = this.x + this.dx * this.scale;
-        let y = this.y + this.dy * this.scale;
-
+    deathByOutOfBounds = (x, y) => {
         // check if future snake pos is out of bounds
         if (x < 0 || x >= this.canvasWidth ||
             y < 0 || y >= this.canvasHeight) {
-            isDead = true;
+            this.isDead = true;
+            return true;
         }
-
-        // check if snake ate itself
-        for (let i = 0; i < this.tail.length; i++) {
-            let pos = this.tail[i];
-            if (this.x === pos.x && this.y === pos.y) {
-                isDead = true;
-                break;
-            }
-        }
-
-        if (this.isDead !== isDead) {
-            this.isDead = isDead;
-        }
-        return isDead;
     }
 
-    resurrect = () => {
-        this.isDead = false;
+    deathByWalls = (x, y, walls) => {
+        for (let i = 0; i < walls.length; i++) {
+            const wall = walls[i];
+            if (x === wall.x && y === wall.y) {
+                this.isDead = true;
+                return true;
+            }
+        }
+    }
+
+    deathBySuicide = (x, y) => {
+        // check if snake ate itself
+        for (let i = 0; i < this.tail.length; i++) {
+            const pos = this.tail[i];
+            if (x === pos.x && y === pos.y) {
+                this.isDead = true;
+                return true;
+            }
+        }
+    }
+
+    death = (walls) => {            
+        let x = this.x + this.dx * this.scale;
+        let y = this.y + this.dy * this.scale;
+
+        if (this.deathByOutOfBounds(x, y)) {
+            return true;
+        }
+
+        if (this.deathByWalls(x, y, walls)) {
+            return true;
+        }
+
+        if (this.deathBySuicide(x, y)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    restart = () => {
+        this.x = 0;
+        this.y = 0;
+        this.direction = keyboard.keys.RIGHT_ARROW;        
+        this.lastKnownDirection = this.direction;
+        this.dx = 1;
+        this.dy = 0;
         this.length = 0;
         this.tail = [];
+        this.isDead = false;
     }
 
     getSnakeHead = () => {

@@ -107,3 +107,94 @@ keyboard.keys = {
     CLOSE_BRACKET: 221,
     SINGLE_QUOTE: 222
 };
+
+const getInnerOuterEdgeColRow = (canvasWidth, canvasHeight, scale) => {
+    const cols = Math.floor(canvasWidth / scale);
+    const rows = Math.floor(canvasHeight / scale);
+
+    const middleCol = Math.floor(cols / 2);
+    const middleRow = Math.floor(rows / 2);
+
+    const innerOuterEdgeCol = middleCol / 2;
+    const innerOuterEdgeRow = middleRow / 2;
+
+    return { 
+        innerOuterEdgeCol: innerOuterEdgeCol, 
+        innerOuterEdgeRow: innerOuterEdgeRow, 
+        middleCol: middleCol, 
+        middleRow: middleRow,
+        cols: cols,
+        rows: rows
+    };
+}
+
+export const randomLocationNearMiddle = (canvasWidth, canvasHeight, scale) => {
+    const { innerOuterEdgeCol, innerOuterEdgeRow, middleCol, middleRow } = 
+    getInnerOuterEdgeColRow(canvasWidth, canvasHeight, scale);
+    
+    const randomPositiveInnerColDistance = Math.floor((Math.random() * innerOuterEdgeCol)) + 1;
+    const randomInnerColDistance = randomPositiveInnerColDistance * (Math.random() > 0.5 ? 1 : -1);
+    const randomPositiveInnerRowDistance = Math.floor((Math.random() * innerOuterEdgeRow)) + 1;
+    const randomInnerRowDistance = randomPositiveInnerRowDistance * (Math.random() > 0.5 ? 1 : -1);
+
+    const randomCol = middleCol + randomInnerColDistance;
+    const randomRow = middleRow + randomInnerRowDistance;
+
+    return { x: randomCol * scale, y: randomRow * scale };
+}
+
+export const randomLocationNearEdge = (canvasWidth, canvasHeight, scale) => {
+    const { innerOuterEdgeCol, innerOuterEdgeRow, cols, rows } = 
+    getInnerOuterEdgeColRow(canvasWidth, canvasHeight, scale);
+    
+    const randomOuterColDistance = Math.floor(Math.random() * innerOuterEdgeCol);
+    const randomOuterRowDistance = Math.floor(Math.random() * innerOuterEdgeRow);
+
+    const horizontal = Math.random();
+    const vertical = Math.random();
+
+    let randomCol;
+    let randomRow;
+
+    // near left
+    if (horizontal < 0.33) {
+        // skip first column since the snake is spawned at the beginning
+        randomCol = 1 + randomOuterColDistance;
+    }
+    // near right
+    else if (horizontal < 0.66) {
+        randomCol = cols - randomOuterColDistance;
+    }
+    // near middle
+    else {
+        const leftMiddle = Math.random() > 0.5;
+        if (leftMiddle) {
+            randomCol = cols / 2 - randomOuterColDistance;
+        }
+        else {
+            randomCol = cols / 2 + randomOuterColDistance;
+        }
+    }
+
+    // near top
+    if (vertical < 0.33) {
+        // skip first row since the snake is spawned at the beginning
+        randomRow = 1 + randomOuterRowDistance;
+    }
+    // near bottom
+    else if (vertical < 0.66) {
+        randomRow = rows - randomOuterRowDistance;
+    }
+    // near middle
+    else {
+        const topMiddle = Math.random() > 0.5;
+        if (topMiddle) {
+            randomRow = rows / 2 - randomOuterRowDistance;
+        }
+        else {
+            randomRow = rows / 2 + randomOuterRowDistance;
+        }
+    }
+
+    return { x: randomCol * scale, y: randomRow * scale };
+}
