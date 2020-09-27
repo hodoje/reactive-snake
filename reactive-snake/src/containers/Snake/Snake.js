@@ -1,69 +1,111 @@
 import React, { useEffect, useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './Snake.module.css';
 import Canvas from '../../components/Canvas/Canvas';
-import SnakeClass from './snakee';
-import Point from './point';
+import Point from '../../shared/point';
+import * as actions from '../../store/actions/actions';
+import { canvasSettings, figureStyles } from '../../shared/gameSettings';
+import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
 
-const Snake = () => {
-    let gameOver = false;
-    const frameRate = 10;   // frame rate is set to 10 because it gives the game a genuine feel of the snake game
-    const canvasWidth = 600;
-    const canvasHeight = 600;
-    const scale = 30;
+const Snake = (props) => {    
+    const gameOver = props.gameOver;
+    const initialLoad = props.initialLoad;
+    const snakee = useSelector(state => state.snake);
+    const speed = useSelector(state => state.speed);
+    const walls = useSelector(state => state.walls);
+    const dispatch = useDispatch();
+
+    const endGame = useCallback(
+        () => {
+            dispatch(actions.endGame());
+        }, [dispatch]
+    );
+
+    const eatFood = useCallback(
+        () => {
+            dispatch(actions.eatFood())
+        }, [dispatch]
+    );
+
+    const frameRate = speed.speed;
+    const canvasWidth = canvasSettings.canvasWidth;
+    const canvasHeight = canvasSettings.canvasHeight;
+    const scale = canvasSettings.scale;
+    const cols = Math.floor(canvasWidth / scale);
+    const rows = Math.floor(canvasHeight / scale);
     let food = new Point(0, 0);
-    let snakee = new SnakeClass(canvasWidth, canvasHeight, scale);
+    const wallsMap = [];
     let pickLocationAttempt = 0;
-    let pickLocationAttemptLimit = 3;
+    const pickLocationAttemptLimit = 3;
     
-    const pickFoodLocationRandom = (cols, rows) => {
-        let randomCol = Math.floor(Math.random() * cols);
-        let randomRow = Math.floor(Math.random() * rows);
-        return new Point(randomCol * scale, randomRow * scale);
+    const pickRandomLocation = useCallback(
+        () => {
+            const randomCol = Math.floor(Math.random() * cols);
+            const randomRow = Math.floor(Math.random() * rows);
+            return new Point(randomCol * scale, randomRow * scale);
+        }, [cols, rows, scale]
+    );
+
+    const pickFoodLocationRandom = () => {
+        return pickRandomLocation();
     }
 
-    const pickFoodLocationFromAvailableLocations = (cols, rows) => {
+    const pickFoodLocationFromAvailableLocations = () => {
         let location = null;
         let snakeHead = snakee.getSnakeHead();
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 let x = col * scale;
                 let y = row * scale;
-                if (snakee.tail.find(part => part.x === x && part.y === y) || (snakeHead.x === x && snakeHead.y === y)) {
-                    continue;
+                let okLocation = false;
+                // we can use one if, but it is better to not even check other conditions
+                // if one is true
+                if (snakee.tail.find(part => part.x !== x && part.y !== y)) {
+                    okLocation = true;
+                } else if (wallsMap.find(w => w.x !== x && w.y !== y)) {
+                    okLocation = true;
+                } else if (snakeHead.x !== x && snakeHead.y !== y) {
+                    okLocation = true;
                 }
-                location = new Point(x, y);
+
+                if (okLocation) {
+                    location = new Point(x, y);
+                    break;
+                }
             }
         }
         return location;
     }
 
     const deleteFood = useCallback(
-        (ctx, x, y, isBody) => {
-            ctx.clearRect(x, y, scale, scale);
-            if (isBody) {
-                ctx.fillStyle = '#93FF19';
+        (ctx, x, y, isHead) => {
+            // the only time we don't have a context is on the initial pick of food location
+            // in the setup method in the useEffect hook
+            // in any other case we will have the context
+            if (ctx) {
+                ctx.clearRect(x, y, scale, scale);
+                if (isHead) {
+                    ctx.fillStyle = figureStyles.head.fill;
+                }
+                else {
+                    ctx.fillStyle = figureStyles.body.fill;
+                }
+                ctx.fillRect(x, y, scale, scale);
             }
-            else {
-                ctx.fillStyle = 'white';
-            }
-            ctx.fillRect(x, y, scale, scale);
         }, [scale]
     );
 
     const pickFoodLocation = useCallback(
         (ctx) => {
-            let cols = Math.floor(canvasWidth / scale);
-            let rows = Math.floor(canvasHeight / scale);
             let newPos;
-
             // we want to pick a random location if that is possible since it is faaster
             // but if we get repeated hits on the snake body, we want to use a slower but 100% successful method
             if (pickLocationAttempt < pickLocationAttemptLimit) {
-                newPos = pickFoodLocationRandom(cols, rows);
+                newPos = pickFoodLocationRandom();
             }
             else {
-                newPos = pickFoodLocationFromAvailableLocations(cols, rows);
+                newPos = pickFoodLocationFromAvailableLocations();
             }
 
             // if it can't find the new pos it is game over
@@ -76,9 +118,9 @@ const Snake = () => {
             if (snakee.tail.find(part => part.x === newPos.x && part.y === newPos.y) || (snakeHead.x === newPos.x && snakeHead.y === newPos.y)) {
                 // check if food spawned on the body (and that also gives us if it spawned on the body)
                 // which let us determine if we will repaint the spot as a head or a body
-                let isBody = snakeHead.x === newPos.x && snakeHead.y === newPos.y;
+                let isHead = snakeHead.x === newPos.x && snakeHead.y === newPos.y;
                 pickLocationAttempt++;
-                deleteFood(ctx, newPos.x, newPos.y, isBody);
+                deleteFood(ctx, newPos.x, newPos.y, isHead);
                 pickFoodLocation(ctx);
             }
             else {
@@ -96,9 +138,34 @@ const Snake = () => {
             // this can be improved with tracking all the valid points where it can spawn
             // and choosing at random on of those
             if (pickFoodLocation(ctx)) {
-                gameOver = true;
+                endGame();
             }
-        }, [pickFoodLocation]
+        }, [pickFoodLocation, endGame]
+    );
+
+    const pickWallsLocation = useCallback(
+        () => {
+            const numberOfWalls = cols * rows * (walls.walls / 100);
+            for (let i = 0; i < numberOfWalls; i++) {
+                const middle = Math.random() > 0.5;
+                let point;
+
+                if (middle) {
+                    point = randomLocationNearMiddle(canvasWidth, canvasHeight, scale);
+                }
+                else {
+                    point = randomLocationNearEdge(canvasWidth, canvasHeight, scale);
+                }
+
+                if (wallsMap.findIndex(w => w.x === point.x && w.y === point.y) === -1) {
+                    wallsMap.push(point);
+                }
+                else {
+                    i--;
+                    continue;
+                }
+            }
+        }, [cols, rows, walls, wallsMap, canvasWidth, canvasHeight, scale]
     );
 
     const drawHorizontalGridLines = (ctx, strokeStyle) => {
@@ -120,48 +187,58 @@ const Snake = () => {
         ctx.strokeStyle = strokeStyle;
         ctx.stroke(); 
     }
+
+    const drawWalls = (ctx) => {
+        ctx.fillStyle = 'black';
+        for (let i = 0; i < wallsMap.length; i++) {
+            ctx.fillRect(wallsMap[i].x, wallsMap[i].y, scale, scale);
+        }
+    }
     
     const snakeGameLifecycle = (ctx) => {
-        if (!gameOver) {
-            // draw the snake
-            if (snakee.death()) {
-                console.log('death');
-                gameOver = true;
+        if (initialLoad) {
+            if (!gameOver) {
+                console.log('drawing walls');
+                drawWalls(ctx);
+                // draw the snake
+                if (snakee.death(wallsMap)) {
+                    snakee.show(ctx);
+                    endGame();
+                    console.log('death');
+                    return;
+                }
+                snakee.update();
                 snakee.show(ctx);
-                return;
+                
+                // check if snake is eating
+                if (snakee.eat(food, eatFood)) {
+                    setFoodSpawnPoint(ctx);
+                }
+                
+                // draw the food
+                ctx.fillStyle = figureStyles.food.fill;
+                ctx.fillRect(food.x, food.y, scale, scale);
             }
-            snakee.update();
-            snakee.show(ctx);
-            
-            // check if snake is eating
-            if (snakee.eat(food)) {
-                setFoodSpawnPoint(ctx);
-            }
-            // draw the food
-            ctx.fillStyle = '#FF0080';
-            ctx.fillRect(food.x, food.y, scale, scale);
-        }
-        else {
-            snakee.show(ctx);
         }
     }
 
     const draw = (ctx) => {
         // draw the grid
-        drawVerticalGridLines(ctx, 'rgb(255,255,255)');
-        drawHorizontalGridLines(ctx, 'rgb(255,255,255)');
+        drawVerticalGridLines(ctx, canvasSettings.stroke);
+        drawHorizontalGridLines(ctx, canvasSettings.stroke);
         snakeGameLifecycle(ctx);
     }
 
     const setup = useCallback(
-        () => {       
+        () => {
+            pickWallsLocation();
             setFoodSpawnPoint();
-        }, [setFoodSpawnPoint]    
+        }, [setFoodSpawnPoint, pickWallsLocation]    
     );
 
     useEffect(() => {
         document.addEventListener('keydown', snakee.getDirection);
-
+        console.log('render');
         setup();
 
         return () => {
@@ -176,4 +253,6 @@ const Snake = () => {
     );
 };
 
-export default Snake;
+export default React.memo(Snake, (props, nextProps) => {
+    return props.gameOver === nextProps.gameOver
+});

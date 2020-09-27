@@ -8,9 +8,14 @@
     -webkit-backdrop-filter: blur(3px);
     z-index: 2;
     will-change: transform;
+    text-align:center
 }
 
-.Summary-Slide-Out {
+.SummaryOut {
+    transform: translateX(0%);
+}
+
+.SummarySlideOut {
     -webkit-animation: left-to-right .75s ease-in-out forwards;
     animation: left-to-right .75s ease-in-out forwards;
     -webkit-animation-delay: .1s;
@@ -35,4 +40,29 @@
     100% {
         transform: translateX(0%);
     }
+}
+
+.CurrentScore {
+    margin-top: 15%;
+    color: white;
+    font-size: 3rem;
+}
+
+.Highscore {
+    display: inline;
+    color: white;
+}
+
+.NewHighscore {
+    color: yellowgreen;
+    font-weight: bold;
+}
+
+.Heading {
+    color: white;
+    font-size: 3rem;
+}
+
+.Instruction {
+    color: white;
 }

@@ -12,15 +12,15 @@ export const endGame = () => {
     };
 }
 
-export const ateFood = () => {
+export const eatFood = () => {
     return {
-        type: actionTypes.ATE_FOOD
+        type: actionTypes.EAT_FOOD
     };
 }
 
-export const ateBonusFood = () => {
+export const eatBonusFood = () => {
     return {
-        type: actionTypes.ATE_BONUS_FOOD
+        type: actionTypes.EAT_BONUS_FOOD
     };
 }
 
