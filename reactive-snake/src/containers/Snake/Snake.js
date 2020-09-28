@@ -3,11 +3,11 @@ import { useDispatch } from 'react-redux';
 
 import classes from './Snake.module.css';
 import Canvas from '../../components/Canvas/Canvas';
-import Point from '../../shared/point';
+import Food from './Models/food';
+import SnakeClass from './Models/snake';
 import * as actions from '../../store/actions/actions';
 import { canvasSettings, figureStyles } from '../../shared/gameSettings';
 import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
-import SnakeClass from '../../shared/snake';
 
 const Snake = (props) => {    
     const gameOver = props.gameOver;
@@ -35,100 +35,13 @@ const Snake = (props) => {
     const scale = canvasSettings.scale;
     const cols = Math.floor(canvasWidth / scale);
     const rows = Math.floor(canvasHeight / scale);
-    let food = new Point(0, 0);
+    let food = new Food(cols, rows, scale, endGame);
     const wallsMap = [];
-    let pickLocationAttempt = 0;
-    const pickLocationAttemptLimit = 3;
-    
-    const pickRandomLocation = useCallback(
-        () => {
-            const randomCol = Math.floor(Math.random() * cols);
-            const randomRow = Math.floor(Math.random() * rows);
-            return new Point(randomCol * scale, randomRow * scale);
-        }, [cols, rows, scale]
-    );
-
-    const pickFoodLocationRandom = () => {
-        return pickRandomLocation();
-    }
-
-    const checkIfFreeFoodLocation = (x, y) => {
-        let free = true;
-        let snakeHead = snakee.getSnakeHead();
-
-        if (snakee.tail.find(part => part.x === x && part.y === y)) {
-            free = false;
-        } else if (wallsMap.find(w => w.x === x && w.y === y)) {
-            free = false;
-        } else if (snakeHead.x === x && snakeHead.y === y) {
-            free = false;
-        }
-
-        return free;
-    }
-
-    const pickFoodLocationFromAvailableLocations = () => {
-        let location = null;
-
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < cols; col++) {
-                let x = col * scale;
-                let y = row * scale;
-                let okLocation = checkIfFreeFoodLocation(x, y);
-
-                if (okLocation) {
-                    location = new Point(x, y);
-                    break;
-                }
-            }
-        }
-        return location;
-    }
-
-    const pickFoodLocation = useCallback(
-        (ctx) => {
-            let newPos;
-            // we want to pick a random location if that is possible since it is faaster
-            // but if we get repeated hits on the snake body, we want to use a slower but 100% successful method
-            if (pickLocationAttempt < pickLocationAttemptLimit) {
-                newPos = pickFoodLocationRandom();
-            }
-            else {
-                newPos = pickFoodLocationFromAvailableLocations();
-            }
-
-            // if it can't find the new pos it is game over
-            if (newPos === null) {
-                return false;
-            }
-
-            if (!checkIfFreeFoodLocation(newPos.x, newPos.y)) {
-                pickLocationAttempt++;
-                pickFoodLocation(ctx);
-            }
-            else {
-                food.x = newPos.x;
-                food.y = newPos.y;
-                // eslint-disable-next-line react-hooks/exhaustive-deps
-                pickLocationAttempt = 0;
-            }
-
-        }, [food, canvasWidth, canvasHeight, scale, snakee]
-    );
-
-    const setFoodSpawnPoint = useCallback(
-        (ctx) => {
-            // this can be improved with tracking all the valid points where it can spawn
-            // and choosing at random on of those
-            if (pickFoodLocation(ctx)) {
-                endGame();
-            }
-        }, [pickFoodLocation, endGame]
-    );
 
     const pickWallsLocation = useCallback(
         () => {
-            const numberOfWalls = cols * rows * (walls.walls / 100);
+            const percentOfWalls = (walls.walls / 100);
+            const numberOfWalls = cols * rows * percentOfWalls;
             for (let i = 0; i < numberOfWalls; i++) {
                 const middle = Math.random() > 0.5;
                 let point;
@@ -193,7 +106,7 @@ const Snake = (props) => {
                 
                 // check if snake is eating
                 if (snakee.eat(food, eatFood)) {
-                    setFoodSpawnPoint(ctx);
+                    food.setFoodSpawnPoint(ctx, snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
                 }
                 
                 // draw the food
@@ -213,8 +126,8 @@ const Snake = (props) => {
     const setup = useCallback(
         () => {
             pickWallsLocation();
-            setFoodSpawnPoint();
-        }, [setFoodSpawnPoint, pickWallsLocation]    
+            food.setFoodSpawnPoint(null, snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
+        }, [pickWallsLocation, snakee, wallsMap, food]    
     );
 
     useEffect(() => {

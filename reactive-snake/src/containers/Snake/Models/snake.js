@@ -1,5 +1,5 @@
-import { keyboard } from './utility';
-import { figureStyles } from './gameSettings';
+import { keyboard } from '../../../shared/utility';
+import { figureStyles } from '../../../shared/gameSettings';
 import Point from './point';
 
 export default class SnakeClass {
@@ -206,6 +206,10 @@ export default class SnakeClass {
 
     getSnakeHead = () => {
         return new Point(this.x, this.y);
+    }
+
+    getSnakeTail = () => {
+        return this.tail;
     }
 
     getSnakeLength = () => {
