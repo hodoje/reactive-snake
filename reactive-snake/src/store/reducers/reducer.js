@@ -8,6 +8,8 @@ const initialState = {
     initialLoad: false,
     speed: speedSettings.easy,
     walls: wallSettings.easy,
+    speedGameMode: gameModes.easy,
+    wallsGameMode: gameModes.easy,
     bonusFoodPercent: speedSettings.easy.speed + wallSettings.easy.walls,
     currentScore: 0,
     highscore: 0,
@@ -53,48 +55,60 @@ const eatBonusFood = (state, action) => {
 }
 
 const setSpeed = (state, action) => {
-    let difficulty;
+    let speed;
+    let speedGameMode;
 
     switch (action.mode) {
         case gameModes.easy:
-            difficulty = speedSettings.easy;
+            speed = speedSettings.easy;
+            speedGameMode = gameModes.easy
             break;
         case gameModes.medium:
-            difficulty = speedSettings.medium;
+            speed = speedSettings.medium;
+            speedGameMode = gameModes.medium
             break;
         case gameModes.hard:
-            difficulty = speedSettings.hard;
+            speed = speedSettings.hard;
+            speedGameMode = gameModes.hard
             break;
         default:
-            difficulty = state.speed;
+            speed = state.speed;
+            speedGameMode = state.speedGameMode
             break;
     }
 
     return updateObject(state, {
-        speed: difficulty
+        speed: speed,
+        speedGameMode: speedGameMode
     });
 }
 
 const setWalls = (state, action) => {
-    let difficulty;
+    let walls;
+    let wallsGameMode;
 
     switch (action.mode) {
         case gameModes.easy:
-            difficulty = wallSettings.easy;
+            walls = wallSettings.easy;
+            wallsGameMode = gameModes.easy;
             break;
         case gameModes.medium:
-            difficulty = wallSettings.medium;
+            walls = wallSettings.medium;
+            wallsGameMode = gameModes.medium;
             break;
         case gameModes.hard:
-            difficulty = wallSettings.hard;
+            walls = wallSettings.hard;
+            wallsGameMode = gameModes.hard;
             break;
         default:
-            difficulty = state.walls;
+            walls = state.walls;
+            wallsGameMode = state.wallsGameMode
             break;
     }
 
     return updateObject(state, {
-        walls: difficulty
+        walls: walls,
+        wallsGameMode: wallsGameMode
     });
 }
 

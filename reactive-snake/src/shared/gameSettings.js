@@ -1,8 +1,11 @@
+// this can be changed to track number of columns and then set the scale
+// ofc you should set these settings to give a round number of either columns
+// when it comes to current shape of the settings or round number for scale
 export const canvasSettings = Object.freeze(
     {
-        canvasWidth: 600,
-        canvasHeight: 600,
-        scale: 30,
+        canvasWidth: 700,
+        canvasHeight: 700,
+        scale: 35,
         stroke: 'white'
     }
 );
@@ -30,9 +33,18 @@ export const figureStyles = Object.freeze(
 
 export const gameModes = Object.freeze(
     {
-        easy: 'EASY',
-        medium: 'MEDIUM',
-        hard: 'HARD'
+        easy: {
+            name: 'EASY',
+            value: 1
+        },
+        medium: {
+            name: 'MEDIUM',
+            value: 2
+        },
+        hard: {
+            name: 'HARD',
+            value: 3
+        }
     }
 );
 

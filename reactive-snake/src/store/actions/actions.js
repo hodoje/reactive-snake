@@ -24,16 +24,16 @@ export const eatBonusFood = () => {
     };
 }
 
-export const setSpeed = (action) => {
+export const setSpeed = (mode) => {
     return {
         type: actionTypes.SET_SPEED,
-        mode: action.mode
+        mode: mode
     };
 }
 
-export const setWalls = (action) => {
+export const setWalls = (mode) => {
     return {
         type: actionTypes.SET_WALLS,
-        mode: action.mode
+        mode: mode
     };
 }
