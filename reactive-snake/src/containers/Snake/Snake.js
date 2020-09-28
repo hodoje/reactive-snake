@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import classes from './Snake.module.css';
 import Canvas from '../../components/Canvas/Canvas';
@@ -7,13 +7,14 @@ import Point from '../../shared/point';
 import * as actions from '../../store/actions/actions';
 import { canvasSettings, figureStyles } from '../../shared/gameSettings';
 import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
+import SnakeClass from '../../shared/snake';
 
 const Snake = (props) => {    
     const gameOver = props.gameOver;
     const initialLoad = props.initialLoad;
-    const snakee = useSelector(state => state.snake);
-    const speed = useSelector(state => state.speed);
-    const walls = useSelector(state => state.walls);
+    const speed = props.speed;
+    const walls = props.walls;
+    const snakee = new SnakeClass(canvasSettings.canvasWidth, canvasSettings.canvasHeight, canvasSettings.scale);
     const dispatch = useDispatch();
 
     const endGame = useCallback(
@@ -51,23 +52,29 @@ const Snake = (props) => {
         return pickRandomLocation();
     }
 
+    const checkIfFreeFoodLocation = (x, y) => {
+        let free = true;
+        let snakeHead = snakee.getSnakeHead();
+
+        if (snakee.tail.find(part => part.x === x && part.y === y)) {
+            free = false;
+        } else if (wallsMap.find(w => w.x === x && w.y === y)) {
+            free = false;
+        } else if (snakeHead.x === x && snakeHead.y === y) {
+            free = false;
+        }
+
+        return free;
+    }
+
     const pickFoodLocationFromAvailableLocations = () => {
         let location = null;
-        let snakeHead = snakee.getSnakeHead();
+
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 let x = col * scale;
                 let y = row * scale;
-                let okLocation = false;
-                // we can use one if, but it is better to not even check other conditions
-                // if one is true
-                if (snakee.tail.find(part => part.x !== x && part.y !== y)) {
-                    okLocation = true;
-                } else if (wallsMap.find(w => w.x !== x && w.y !== y)) {
-                    okLocation = true;
-                } else if (snakeHead.x !== x && snakeHead.y !== y) {
-                    okLocation = true;
-                }
+                let okLocation = checkIfFreeFoodLocation(x, y);
 
                 if (okLocation) {
                     location = new Point(x, y);
@@ -77,24 +84,6 @@ const Snake = (props) => {
         }
         return location;
     }
-
-    const deleteFood = useCallback(
-        (ctx, x, y, isHead) => {
-            // the only time we don't have a context is on the initial pick of food location
-            // in the setup method in the useEffect hook
-            // in any other case we will have the context
-            if (ctx) {
-                ctx.clearRect(x, y, scale, scale);
-                if (isHead) {
-                    ctx.fillStyle = figureStyles.head.fill;
-                }
-                else {
-                    ctx.fillStyle = figureStyles.body.fill;
-                }
-                ctx.fillRect(x, y, scale, scale);
-            }
-        }, [scale]
-    );
 
     const pickFoodLocation = useCallback(
         (ctx) => {
@@ -113,14 +102,8 @@ const Snake = (props) => {
                 return false;
             }
 
-            // check food spawned on the snake or not
-            let snakeHead = snakee.getSnakeHead();
-            if (snakee.tail.find(part => part.x === newPos.x && part.y === newPos.y) || (snakeHead.x === newPos.x && snakeHead.y === newPos.y)) {
-                // check if food spawned on the body (and that also gives us if it spawned on the body)
-                // which let us determine if we will repaint the spot as a head or a body
-                let isHead = snakeHead.x === newPos.x && snakeHead.y === newPos.y;
+            if (!checkIfFreeFoodLocation(newPos.x, newPos.y)) {
                 pickLocationAttempt++;
-                deleteFood(ctx, newPos.x, newPos.y, isHead);
                 pickFoodLocation(ctx);
             }
             else {
@@ -130,7 +113,7 @@ const Snake = (props) => {
                 pickLocationAttempt = 0;
             }
 
-        }, [food, canvasWidth, canvasHeight, scale, snakee, deleteFood]
+        }, [food, canvasWidth, canvasHeight, scale, snakee]
     );
 
     const setFoodSpawnPoint = useCallback(
@@ -198,13 +181,11 @@ const Snake = (props) => {
     const snakeGameLifecycle = (ctx) => {
         if (initialLoad) {
             if (!gameOver) {
-                console.log('drawing walls');
                 drawWalls(ctx);
                 // draw the snake
                 if (snakee.death(wallsMap)) {
                     snakee.show(ctx);
                     endGame();
-                    console.log('death');
                     return;
                 }
                 snakee.update();
@@ -238,7 +219,7 @@ const Snake = (props) => {
 
     useEffect(() => {
         document.addEventListener('keydown', snakee.getDirection);
-        console.log('render');
+
         setup();
 
         return () => {
