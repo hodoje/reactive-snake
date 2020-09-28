@@ -76,7 +76,7 @@ export const wallSettings = Object.freeze(
             points: 100
         },
         hard: {
-            walls: 5,
+            walls: 6,
             points: 150
         }
     }
