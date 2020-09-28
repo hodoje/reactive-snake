@@ -1,34 +1,89 @@
 .Menu {
-    width: 200px;
-    height: 600px;
-    float: left;
-    position: relative;
-    padding: 0;
-    background-color: #111111;
-    z-index: 3;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    padding: 0;    
+    grid-template-rows: auto auto auto;
+    background-color: rgba(25,25,25,0.75);
+    transform: translateX(-100%);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    z-index: 2;
+    will-change: transform;
+    text-align: center;
     box-shadow: inset 0px 0px 50px 0px rgba(0,0,0,1);
-    display: flex;
-    justify-content: center;
 }
 
-.Menu .Button {
-    display: block;
-    width: 48px;
-    height: 48px;   
-    margin-top: 480px;
+.MenuOut {
+    transform: translateX(0%);
+}
+
+.MenuSlideOut {
+    -webkit-animation: left-to-right .75s ease-in-out forwards;
+    animation: left-to-right .75s ease-in-out forwards;
+    -webkit-animation-delay: .1s;
+    animation-delay: .1s;
+}
+
+@keyframes left-to-right{
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@-webkit-keyframes left-to-right{
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+.CurrentScore {
+    margin-top: 10%;
+    margin-bottom: 16px;
+    font-size: 5rem;
+}
+
+.Highscore {
+    display: inline;
+}
+
+.NewHighscore {
+    color: yellowgreen;
+    font-weight: bold;
+}
+
+.Heading {
+    font-size: 3rem;
+}
+
+.WhiteText {
     color: white;
 }
 
-.Menu .Button:hover {
+.Menu .Button {
+    width: 48px;
+    height: 48px;   
+    color: white;
+}
+
+.Button:hover {
     color: #93FF19;
 }
 
-.Menu .Button:active {
+.Button:active {
     color: #57a300;
     transform: scale(0.85);
 }
 
-.Menu .DisabledButton {
+.DisabledButton {
     opacity: 0.6;
     pointer-events: none;
 }
