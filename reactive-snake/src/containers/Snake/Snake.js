@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import classes from './Snake.module.css';
 import Canvas from '../../components/Canvas/Canvas';
@@ -7,13 +7,14 @@ import Point from '../../shared/point';
 import * as actions from '../../store/actions/actions';
 import { canvasSettings, figureStyles } from '../../shared/gameSettings';
 import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
+import SnakeClass from '../../shared/snake';
 
 const Snake = (props) => {    
     const gameOver = props.gameOver;
     const initialLoad = props.initialLoad;
-    const snakee = useSelector(state => state.snake);
-    const speed = useSelector(state => state.speed);
-    const walls = useSelector(state => state.walls);
+    const speed = props.speed;
+    const walls = props.walls;
+    const snakee = new SnakeClass(canvasSettings.canvasWidth, canvasSettings.canvasHeight, canvasSettings.scale);
     const dispatch = useDispatch();
 
     const endGame = useCallback(
@@ -198,13 +199,11 @@ const Snake = (props) => {
     const snakeGameLifecycle = (ctx) => {
         if (initialLoad) {
             if (!gameOver) {
-                console.log('drawing walls');
                 drawWalls(ctx);
                 // draw the snake
                 if (snakee.death(wallsMap)) {
                     snakee.show(ctx);
                     endGame();
-                    console.log('death');
                     return;
                 }
                 snakee.update();
@@ -238,7 +237,7 @@ const Snake = (props) => {
 
     useEffect(() => {
         document.addEventListener('keydown', snakee.getDirection);
-        console.log('render');
+
         setup();
 
         return () => {

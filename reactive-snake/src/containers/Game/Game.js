@@ -13,6 +13,8 @@ const Game = () => {
     const currentScore = useSelector(state => state.currentScore);
     const highscore = useSelector(state => state.highscore);
     const isNewHighscore = useSelector(state => state.isNewHighscore);
+    const speed = useSelector(state => state.speed);
+    const walls = useSelector(state => state.walls);
     const speedGameMode = useSelector(state => state.speedGameMode);
     const wallsGameMode = useSelector(state => state.wallsGameMode);
 
@@ -32,7 +34,7 @@ const Game = () => {
     return (
         <div className={classes.Game}>
             {menu}
-            <Snake gameOver={gameOver} initialLoad={initialLoad}/>
+            <Snake gameOver={gameOver} speed={speed} walls={walls} initialLoad={initialLoad}/>
         </div>
     );
 };

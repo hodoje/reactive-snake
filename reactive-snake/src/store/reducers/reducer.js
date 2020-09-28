@@ -1,7 +1,6 @@
 import * as actionTypes from '../actions/actionTypes';
 import { updateObject } from '../../shared/utility';
-import { speedSettings, wallSettings, canvasSettings, gameModes } from '../../shared/gameSettings';
-import SnakeClass from '../../shared/snake';
+import { speedSettings, wallSettings, gameModes } from '../../shared/gameSettings';
 
 const initialState = {
     gameOver: true,
@@ -13,12 +12,10 @@ const initialState = {
     bonusFoodPercent: speedSettings.easy.speed + wallSettings.easy.walls,
     currentScore: 0,
     highscore: 0,
-    isNewHighscore: false,
-    snake: new SnakeClass(canvasSettings.canvasWidth, canvasSettings.canvasHeight, canvasSettings.scale)    
+    isNewHighscore: false
 }
 
 const startGame = (state, action) => {
-    state.snake.restart();
     return updateObject(state, {
         gameOver: false,
         currentScore: 0,
