@@ -10,7 +10,6 @@ import RangeSlider from '../../components/RangeSlider/RangeSlider';
 import { gameModes } from '../../shared/gameSettings';
 
 const Menu = (props) => {
-
     const { 
         gameOver, 
         initialLoad, 
@@ -33,39 +32,35 @@ const Menu = (props) => {
 
     const classList = [classes.Menu];
 
-    const initialScreen = (
-        <Aux>
-            <h1 className={[classes.Heading, classes.WhiteText].join(' ')}>Snake Game</h1>
-            <h4 className={classes.WhiteText}>Press the play button to start!</h4>
-        </Aux>
-    );
-
-    let displayHighscore = <p className={[classes.Highscore, classes.WhiteText].join(' ')}>Best score: {highscore}</p>;
+    let display = null;
+    const initialDisplay = <h1 className={[classes.Heading, classes.WhiteText, classes.NoSelect].join(' ')}>Snake Game</h1>;
+    
+    let displayHighscore = <p className={[classes.Highscore, classes.WhiteText, classes.NoSelect].join(' ')}>Best score: {highscore}</p>;
     if (isNewHighscore) {
         displayHighscore = (
             <Aux>
-                <span className={classes.NewHighscore}>New!</span>
+                <span className={[classes.NewHighscore, classes.NoSelect].join(' ')}>New!</span>
                 &nbsp;
-                <p className={[classes.Highscore, classes.WhiteText].join(' ')}>Best score: {highscore}</p>;
+                <p className={[classes.Highscore, classes.WhiteText, classes.NoSelect].join(' ')}>Best score: {highscore}</p>;
             </Aux>
         );
     }
 
-    let display = null;
+    const gameOverDisplay = (
+        <Aux>
+            <p className={[classes.CurrentScore, classes.WhiteText, classes.NoSelect].join(' ')}>{currentScore}</p>
+            {displayHighscore}
+        </Aux>
+    );
 
     if (!initialLoad) {
-        display = initialScreen;
+        display = initialDisplay;
         classList.push(classes.MenuOut);
     }
     else {
         if (gameOver) {
             classList.push(classes.MenuSlideOut);
-            display = (
-                <Aux>
-                    <p className={[classes.CurrentScore, classes.WhiteText].join(' ')}>{currentScore}</p>
-                    {displayHighscore}
-                </Aux>
-            );
+            display = gameOverDisplay;
         }
     }
 
@@ -109,7 +104,7 @@ const Menu = (props) => {
                 {display}
             </div>
             <div>
-                <h4 className={classes.WhiteText}>Speed</h4>
+                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
                 <RangeSlider 
                     background="rgb(147,255,25)" 
                     labels={['easy', 'medium', 'hard']}
@@ -121,7 +116,7 @@ const Menu = (props) => {
                     initialValue={speedGameMode.value} 
                     onChange={onSpeedChange}/>
                 <br/>
-                <h4 className={classes.WhiteText}>Walls</h4>
+                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
                 <RangeSlider 
                     background="rgb(255,0,128)" 
                     labels={['easy', 'medium', 'hard']}
