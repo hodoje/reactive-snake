@@ -52,23 +52,29 @@ const Snake = (props) => {
         return pickRandomLocation();
     }
 
+    const checkIfFreeFoodLocation = (x, y) => {
+        let free = true;
+        let snakeHead = snakee.getSnakeHead();
+
+        if (snakee.tail.find(part => part.x === x && part.y === y)) {
+            free = false;
+        } else if (wallsMap.find(w => w.x === x && w.y === y)) {
+            free = false;
+        } else if (snakeHead.x === x && snakeHead.y === y) {
+            free = false;
+        }
+
+        return free;
+    }
+
     const pickFoodLocationFromAvailableLocations = () => {
         let location = null;
-        let snakeHead = snakee.getSnakeHead();
+
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 let x = col * scale;
                 let y = row * scale;
-                let okLocation = false;
-                // we can use one if, but it is better to not even check other conditions
-                // if one is true
-                if (snakee.tail.find(part => part.x !== x && part.y !== y)) {
-                    okLocation = true;
-                } else if (wallsMap.find(w => w.x !== x && w.y !== y)) {
-                    okLocation = true;
-                } else if (snakeHead.x !== x && snakeHead.y !== y) {
-                    okLocation = true;
-                }
+                let okLocation = checkIfFreeFoodLocation(x, y);
 
                 if (okLocation) {
                     location = new Point(x, y);
@@ -78,24 +84,6 @@ const Snake = (props) => {
         }
         return location;
     }
-
-    const deleteFood = useCallback(
-        (ctx, x, y, isHead) => {
-            // the only time we don't have a context is on the initial pick of food location
-            // in the setup method in the useEffect hook
-            // in any other case we will have the context
-            if (ctx) {
-                ctx.clearRect(x, y, scale, scale);
-                if (isHead) {
-                    ctx.fillStyle = figureStyles.head.fill;
-                }
-                else {
-                    ctx.fillStyle = figureStyles.body.fill;
-                }
-                ctx.fillRect(x, y, scale, scale);
-            }
-        }, [scale]
-    );
 
     const pickFoodLocation = useCallback(
         (ctx) => {
@@ -114,14 +102,8 @@ const Snake = (props) => {
                 return false;
             }
 
-            // check food spawned on the snake or not
-            let snakeHead = snakee.getSnakeHead();
-            if (snakee.tail.find(part => part.x === newPos.x && part.y === newPos.y) || (snakeHead.x === newPos.x && snakeHead.y === newPos.y)) {
-                // check if food spawned on the body (and that also gives us if it spawned on the body)
-                // which let us determine if we will repaint the spot as a head or a body
-                let isHead = snakeHead.x === newPos.x && snakeHead.y === newPos.y;
+            if (!checkIfFreeFoodLocation(newPos.x, newPos.y)) {
                 pickLocationAttempt++;
-                deleteFood(ctx, newPos.x, newPos.y, isHead);
                 pickFoodLocation(ctx);
             }
             else {
@@ -131,7 +113,7 @@ const Snake = (props) => {
                 pickLocationAttempt = 0;
             }
 
-        }, [food, canvasWidth, canvasHeight, scale, snakee, deleteFood]
+        }, [food, canvasWidth, canvasHeight, scale, snakee]
     );
 
     const setFoodSpawnPoint = useCallback(
