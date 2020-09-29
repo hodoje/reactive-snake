@@ -37,3 +37,31 @@ export const setWalls = (mode) => {
         mode: mode
     };
 }
+
+export const setUpControl = (control) => {
+    return {
+        type: actionTypes.SET_UP_CONTROL,
+        control: control
+    };
+}
+
+export const setDownControl = (control) => {
+    return {
+        type: actionTypes.SET_DOWN_CONTROL,
+        control: control
+    };
+}
+
+export const setLeftControl = (control) => {
+    return {
+        type: actionTypes.SET_LEFT_CONTROL,
+        control: control
+    };
+}
+
+export const setRightControl = (control) => {
+    return {
+        type: actionTypes.SET_RIGHT_CONTROL,
+        control: control
+    };
+}

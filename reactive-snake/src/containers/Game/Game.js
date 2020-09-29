@@ -8,15 +8,19 @@ import Menu from '../../containers/Menu/Menu';
 
 const Game = () => {
 
-    const gameOver = useSelector(state => state.gameOver);
-    const initialLoad = useSelector(state => state.initialLoad);
-    const currentScore = useSelector(state => state.currentScore);
-    const highscore = useSelector(state => state.highscore);
-    const isNewHighscore = useSelector(state => state.isNewHighscore);
-    const speed = useSelector(state => state.speed);
-    const walls = useSelector(state => state.walls);
-    const speedGameMode = useSelector(state => state.speedGameMode);
-    const wallsGameMode = useSelector(state => state.wallsGameMode);
+    const gameOver = useSelector(state => state.game.gameOver);
+    const initialLoad = useSelector(state => state.game.initialLoad);
+    const currentScore = useSelector(state => state.game.currentScore);
+    const highscore = useSelector(state => state.game.highscore);
+    const isNewHighscore = useSelector(state => state.game.isNewHighscore);
+    const speed = useSelector(state => state.game.speed);
+    const walls = useSelector(state => state.game.walls);
+    const speedGameMode = useSelector(state => state.game.speedGameMode);
+    const wallsGameMode = useSelector(state => state.game.wallsGameMode);
+    const leftControl = useSelector(state => state.controls.leftControl);
+    const upControl = useSelector(state => state.controls.upControl);
+    const rightControl = useSelector(state => state.controls.rightControl);
+    const downControl = useSelector(state => state.controls.downControl);
 
     let menu = null;
 
@@ -28,7 +32,11 @@ const Game = () => {
             highscore={highscore} 
             isNewHighscore={isNewHighscore}
             speedGameMode={speedGameMode}
-            wallsGameMode={wallsGameMode}/>
+            wallsGameMode={wallsGameMode}
+            leftControl={leftControl}
+            upControl={upControl}
+            rightControl={rightControl}
+            downControl={downControl}/>
     }
 
     return (

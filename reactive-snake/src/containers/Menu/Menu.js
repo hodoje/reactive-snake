@@ -8,6 +8,8 @@ import * as actions from '../../store/actions/actions';
 import Aux from '../../hoc/Auxiliary';
 import RangeSlider from '../../components/RangeSlider/RangeSlider';
 import { gameModes } from '../../shared/gameSettings';
+import ControlForm from '../../components/ControlForm/ControlForm';
+import { faArrowUp, faArrowDown, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const Menu = (props) => {
     const { 
@@ -17,51 +19,16 @@ const Menu = (props) => {
         highscore, 
         isNewHighscore,
         speedGameMode,
-        wallsGameMode
+        wallsGameMode,
+        leftControl,
+        upControl,
+        rightControl,
+        downControl
     } = props;
     const dispatch = useDispatch();
-
-    const buttonClasses = [classes.Button];
-    if (!gameOver) {
-        buttonClasses.push(classes.DisabledButton);
-    }
-
+    
     const startGame = () => {
         dispatch(actions.startGame());
-    }
-
-    const classList = [classes.Menu];
-
-    let display = null;
-    const initialDisplay = <h1 className={[classes.Heading, classes.WhiteText, classes.NoSelect].join(' ')}>Snake Game</h1>;
-    
-    let displayHighscore = <p className={[classes.Highscore, classes.WhiteText, classes.NoSelect].join(' ')}>Best score: {highscore}</p>;
-    if (isNewHighscore) {
-        displayHighscore = (
-            <Aux>
-                <span className={[classes.NewHighscore, classes.NoSelect].join(' ')}>New!</span>
-                &nbsp;
-                <p className={[classes.Highscore, classes.WhiteText, classes.NoSelect].join(' ')}>Best score: {highscore}</p>;
-            </Aux>
-        );
-    }
-
-    const gameOverDisplay = (
-        <Aux>
-            <p className={[classes.CurrentScore, classes.WhiteText, classes.NoSelect].join(' ')}>{currentScore}</p>
-            {displayHighscore}
-        </Aux>
-    );
-
-    if (!initialLoad) {
-        display = initialDisplay;
-        classList.push(classes.MenuOut);
-    }
-    else {
-        if (gameOver) {
-            classList.push(classes.MenuSlideOut);
-            display = gameOverDisplay;
-        }
     }
 
     const onSpeedChange = (event) => {
@@ -98,10 +65,82 @@ const Menu = (props) => {
         dispatch(actions.setWalls(mode));
     }
 
+    // Play button setup
+    const buttonClasses = [classes.Button];
+    if (!gameOver) {
+        buttonClasses.push(classes.DisabledButton);
+    }
+
+    // Is highscore or not
+    let displayHighscore = <p className={[classes.Highscore, classes.WhiteText, classes.NoSelect].join(' ')}>Best score: {highscore}</p>;
+    if (isNewHighscore) {
+        displayHighscore = (
+            <Aux>
+                <span className={[classes.NewHighscore, classes.NoSelect].join(' ')}>New!</span>
+                &nbsp;
+                <p className={[classes.Highscore, classes.WhiteText, classes.NoSelect].join(' ')}>Best score: {highscore}</p>;
+            </Aux>
+        );
+    }
+    
+    let display = null;
+    // On load display
+    const initialDisplay = <h1 className={[classes.Heading, classes.WhiteText, classes.NoSelect].join(' ')}>Snake Game</h1>;
+    // On game over display
+    const gameOverDisplay = (
+        <Aux>
+            <p className={[classes.CurrentScore, classes.WhiteText, classes.NoSelect].join(' ')}>{currentScore}</p>
+            {displayHighscore}
+        </Aux>
+    );
+
+    // On load or game over style
+    const classList = [classes.Menu];
+    if (!initialLoad) {
+        display = initialDisplay;
+        classList.push(classes.MenuOut);
+    }
+    else {
+        if (gameOver) {
+            classList.push(classes.MenuSlideOut);
+            display = gameOverDisplay;
+        }
+    }
+
+    const onLeftControlSubmit = (key) => {
+        dispatch(actions.setLeftControl(key));
+    }
+
+    const onUpControlSubmit = (key) => {
+        dispatch(actions.setUpControl(key));
+    }
+
+    const onRightControlSubmit = (key) => {
+        dispatch(actions.setRightControl(key));
+    }
+
+    const onDownControlSubmit = (key) => {
+        dispatch(actions.setDownControl(key));
+    }
+
+    const leftControlForm = <ControlForm control={leftControl} direction={faArrowLeft} onAssignKey={onLeftControlSubmit}/>;
+    const upControlForm = <ControlForm control={upControl} direction={faArrowUp} onAssignKey={onUpControlSubmit}/>;
+    const rightControlForm = <ControlForm control={rightControl} direction={faArrowRight} onAssignKey={onRightControlSubmit}/>;
+    const downControlForm = <ControlForm control={downControl} direction={faArrowDown} onAssignKey={onDownControlSubmit}/>;
+
     return (
         <div className={classList.join(' ')}>
             <div>
                 {display}
+            </div>
+            <div>
+                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Controls</h4>
+                <div className={classes.Controls}>
+                    {leftControlForm}
+                    {upControlForm}
+                    {rightControlForm}
+                    {downControlForm}
+                </div>
             </div>
             <div>
                 <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
