@@ -3,7 +3,14 @@ import { figureStyles } from '../../../shared/gameSettings';
 import Point from './point';
 
 export default class SnakeClass {
-    constructor(canvasWidth, canvasHeight, scale) {
+    constructor(
+        canvasWidth, 
+        canvasHeight, 
+        scale,
+        leftControl, 
+        upControl, 
+        rightControl, 
+        downControl) {
         this.x = 0;
         this.y = 0;
         // initial state is that the snake moves to the right
@@ -24,6 +31,10 @@ export default class SnakeClass {
         // tracks the history of snake's movement (if it has eaten any food)
         this.tail = [];
         this.isDead = false;
+        this.leftControl = leftControl;
+        this.upControl = upControl;
+        this.rightControl = rightControl;
+        this.downControl = downControl;
     }
 
     update = () => {
@@ -74,16 +85,16 @@ export default class SnakeClass {
         if (!this.isDead) {
             const key = event.keyCode;
             switch(key) {
-                case keyboard.keys.UP_ARROW:
+                case this.upControl:
                     this.setDirection(0, -1, key);
                     break;
-                case keyboard.keys.DOWN_ARROW:
+                case this.downControl:
                     this.setDirection(0, 1, key);
                     break;
-                case keyboard.keys.LEFT_ARROW:
+                case this.leftControl:
                     this.setDirection(-1, 0, key);
                     break;
-                case keyboard.keys.RIGHT_ARROW:
+                case this.rightControl:
                     this.setDirection(1, 0, key);
                     break;
                 default:
@@ -97,23 +108,23 @@ export default class SnakeClass {
         let canMove = true;
 
         switch(newDirection) {
-            case keyboard.keys.UP_ARROW:
-                if (this.lastKnownDirection === keyboard.keys.DOWN_ARROW) {
+            case this.upControl:
+                if (this.lastKnownDirection === this.downControl) {
                     canMove = false;
                 }
                 break;
-            case keyboard.keys.DOWN_ARROW:
-                if (this.lastKnownDirection === keyboard.keys.UP_ARROW) {
+            case this.downControl:
+                if (this.lastKnownDirection === this.upControl) {
                     canMove = false;
                 }
                 break;
-            case keyboard.keys.LEFT_ARROW:
-                if (this.lastKnownDirection === keyboard.keys.RIGHT_ARROW) {
+            case this.leftControl:
+                if (this.lastKnownDirection === this.rightControl) {
                     canMove = false;
                 }
                 break;
-            case keyboard.keys.RIGHT_ARROW:
-                if (this.lastKnownDirection === keyboard.keys.LEFT_ARROW) {
+            case this.rightControl:
+                if (this.lastKnownDirection === this.leftControl) {
                     canMove = false;
                 }
                 break;
@@ -192,28 +203,12 @@ export default class SnakeClass {
         return false;
     }
 
-    restart = () => {
-        this.x = 0;
-        this.y = 0;
-        this.direction = keyboard.keys.RIGHT_ARROW;        
-        this.lastKnownDirection = this.direction;
-        this.dx = 1;
-        this.dy = 0;
-        this.length = 0;
-        this.tail = [];
-        this.isDead = false;
-    }
-
     getSnakeHead = () => {
         return new Point(this.x, this.y);
     }
 
     getSnakeTail = () => {
         return this.tail;
-    }
-
-    getSnakeLength = () => {
-        return this.length;
     }
 
     setLastKnownDirection = () => {

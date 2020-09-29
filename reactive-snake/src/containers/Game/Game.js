@@ -8,33 +8,17 @@ import Menu from '../../containers/Menu/Menu';
 
 const Game = () => {
 
-    const gameOver = useSelector(state => state.gameOver);
-    const initialLoad = useSelector(state => state.initialLoad);
-    const currentScore = useSelector(state => state.currentScore);
-    const highscore = useSelector(state => state.highscore);
-    const isNewHighscore = useSelector(state => state.isNewHighscore);
-    const speed = useSelector(state => state.speed);
-    const walls = useSelector(state => state.walls);
-    const speedGameMode = useSelector(state => state.speedGameMode);
-    const wallsGameMode = useSelector(state => state.wallsGameMode);
+    const gameOver = useSelector(state => state.game.gameOver);
 
     let menu = null;
-
     if (gameOver) {
-        menu = <Menu 
-            gameOver={gameOver} 
-            initialLoad={initialLoad} 
-            currentScore={currentScore} 
-            highscore={highscore} 
-            isNewHighscore={isNewHighscore}
-            speedGameMode={speedGameMode}
-            wallsGameMode={wallsGameMode}/>
+        menu = <Menu />
     }
 
     return (
         <div className={classes.Game}>
             {menu}
-            <Snake gameOver={gameOver} speed={speed} walls={walls} initialLoad={initialLoad}/>
+            <Snake />
         </div>
     );
 };
