@@ -1,4 +1,5 @@
 import Point from '../Models/point';
+import { figureStyles } from '../../../shared/gameSettings';
 
 export default class Food {
     constructor(cols, rows, scale, triggerEndGame) {
@@ -110,5 +111,12 @@ export default class Food {
         if (this.pickFoodLocation(ctx, snakeHead, snakeTail, wallsMap)) {
             this.triggerEndGame();
         }
+    }
+
+    show(ctx) {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = figureStyles.food.fill;
+        ctx.fillStyle = figureStyles.food.fill;
+        ctx.fillRect(this.x, this.y, this.scale, this.scale);
     }
 }

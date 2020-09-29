@@ -18,14 +18,6 @@ const Snake = () => {
     const upControl = useSelector(state => state.controls.upControl);
     const rightControl = useSelector(state => state.controls.rightControl);
     const downControl = useSelector(state => state.controls.downControl);
-    const snakee = new SnakeClass(
-        canvasSettings.canvasWidth, 
-        canvasSettings.canvasHeight, 
-        canvasSettings.scale,
-        leftControl, 
-        upControl, 
-        rightControl, 
-        downControl);
     const dispatch = useDispatch();
 
     const endGame = useCallback(
@@ -46,7 +38,15 @@ const Snake = () => {
     const scale = canvasSettings.scale;
     const cols = Math.floor(canvasWidth / scale);
     const rows = Math.floor(canvasHeight / scale);
-    let food = new Food(cols, rows, scale, endGame);
+    const snakee = new SnakeClass(
+        canvasSettings.canvasWidth, 
+        canvasSettings.canvasHeight, 
+        canvasSettings.scale,
+        leftControl, 
+        upControl, 
+        rightControl, 
+        downControl);
+    const food = new Food(cols, rows, scale, endGame);
     const wallsMap = [];
 
     const pickWallsLocation = useCallback(
@@ -96,7 +96,9 @@ const Snake = () => {
     }
 
     const drawWalls = (ctx) => {
-        ctx.fillStyle = 'black';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = figureStyles.wall.fill;
+        ctx.fillStyle = figureStyles.wall.fill;
         for (let i = 0; i < wallsMap.length; i++) {
             ctx.fillRect(wallsMap[i].x, wallsMap[i].y, scale, scale);
         }
@@ -104,7 +106,7 @@ const Snake = () => {
     
     const snakeGameLifecycle = (ctx) => {
         if (initialLoad) {
-            if (!gameOver) {
+            if (!gameOver) {                
                 drawWalls(ctx);
                 // draw the snake
                 if (snakee.death(wallsMap)) {
@@ -121,8 +123,7 @@ const Snake = () => {
                 }
                 
                 // draw the food
-                ctx.fillStyle = figureStyles.food.fill;
-                ctx.fillRect(food.x, food.y, scale, scale);
+                food.show(ctx);
             }
         }
     }
@@ -144,7 +145,6 @@ const Snake = () => {
     useEffect(() => {
         document.addEventListener('keydown', snakee.getDirection);
 
-        console.log('render');
         setup();
 
         return () => {
