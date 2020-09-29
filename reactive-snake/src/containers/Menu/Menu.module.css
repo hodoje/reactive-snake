@@ -3,7 +3,7 @@
     width: 100%;
     display: grid;
     padding: 0;    
-    grid-template-rows: auto auto auto auto;
+    grid-template-rows: auto auto auto auto auto;
     background-color: rgba(25,25,25,0.75);
     transform: translateX(-100%);
     backdrop-filter: blur(3px);
@@ -88,12 +88,18 @@
     color: rgba(255, 255, 255, .7);
     -webkit-filter: drop-shadow( 0px 0px 5px rgba(255, 255, 255, .7));
     filter: drop-shadow( 0px 0px 5px rgba(255, 255, 255, .7));
+    -webkit-animation: pulse .85s ease-in-out alternate infinite;
+    animation: pulse .85s ease-in-out alternate infinite;
+    -webkit-animation-delay: 2s;
+    animation-delay: 2s;
 }
 
 .Button:hover {
     color: rgba(255, 255, 255, 1);
     -webkit-filter: drop-shadow( 0px 0px 5px rgba(255, 255, 255, 1));
     filter: drop-shadow( 0px 0px 5px rgba(255, 255, 255, 1));
+    -webkit-animation: step-end;
+    animation: step-end;
 }
 
 .Button:active {
@@ -101,6 +107,16 @@
     transform: scale(0.85);
     -webkit-filter: drop-shadow( 0px 0px 5px rgba(147, 255, 25, 1));
     filter: drop-shadow( 0px 0px 5px rgba(147, 255, 25, 1));
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
 
 .DisabledButton {
@@ -121,4 +137,32 @@
 
 .DifficultyHeading {
     margin: 0;
+}
+
+.SpeedSettings {
+    width: 50%;
+    float: left;
+}
+
+.WallsSettings {
+    width: 50%;
+    float: right;
+}
+
+.FoodContainer {
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+    margin: auto;
+}
+
+.FoodHolder {
+    width: 50%;
+    display: grid;
+}
+
+.Food {
+    width: 40px;
+    height: 40px;
+    margin: auto;
 }

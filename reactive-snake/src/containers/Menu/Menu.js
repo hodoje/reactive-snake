@@ -132,6 +132,20 @@ const Menu = (props) => {
                 {display}
             </div>
             <div>
+                <div className={classes.FoodContainer}>
+                    <div className={classes.FoodHolder}>
+                        <span className={[classes.WhiteText, classes.NoSelect].join(' ')}>Food</span>
+                        <br/>
+                        <div className={classes.Food} style={{background: '#FF0080', boxShadow: '0 0 10px #FF0080'}}></div>
+                    </div>
+                    <div className={classes.FoodHolder}>
+                        <span className={[classes.WhiteText, classes.NoSelect].join(' ')}>Bonus</span>
+                        <br/>
+                        <div className={classes.Food} style={{background: 'yellow', boxShadow: '0 0 10px yellow'}}></div>
+                    </div>
+                </div>
+            </div>
+            <div>
                 <h3 className={[classes.WhiteText, classes.NoSelect, classes.ControlsHeading].join(' ')}>Controls</h3>
                 <div className={classes.Controls}>
                     {leftControlForm}
@@ -142,29 +156,32 @@ const Menu = (props) => {
             </div>
             <div>
                 <h3 className={[classes.WhiteText, classes.NoSelect, classes.DifficultyHeading].join(' ')}>Difficulty</h3>
-                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
-                <RangeSlider 
-                    background="rgba(147,255,25, 1)" 
-                    labels={['easy', 'medium', 'hard']}
-                    width="300px" 
-                    height="6px" 
-                    min="1" 
-                    max="3" 
-                    step="1" 
-                    initialValue={speedGameMode.value} 
-                    onChange={onSpeedChange}/>
-                <br/>
-                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
-                <RangeSlider 
-                    background="rgba(255,0,128, 1)" 
-                    labels={['easy', 'medium', 'hard']}
-                    width="300px" 
-                    height="6px" 
-                    min="1" 
-                    max="3" 
-                    step="1" 
-                    initialValue={wallsGameMode.value} 
-                    onChange={onWallsChange}/>
+                <div className={classes.SpeedSettings}>
+                    <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
+                    <RangeSlider 
+                        background="rgba(147,255,25, 1)" 
+                        labels={['easy', 'medium', 'hard']}
+                        width="300px" 
+                        height="6px" 
+                        min="1" 
+                        max="3" 
+                        step="1" 
+                        initialValue={speedGameMode.value} 
+                        onChange={onSpeedChange}/>
+                </div>                
+                <div className={classes.WallsSettings}>
+                    <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
+                    <RangeSlider 
+                        background="rgba(255,0,128, 1)" 
+                        labels={['easy', 'medium', 'hard']}
+                        width="300px" 
+                        height="6px" 
+                        min="1" 
+                        max="3" 
+                        step="1" 
+                        initialValue={wallsGameMode.value} 
+                        onChange={onWallsChange}/>
+                </div>
             </div>
             <div>
                 <FontAwesomeIcon icon={faPlay} className={buttonClasses.join(' ')} onClick={startGame}/>
