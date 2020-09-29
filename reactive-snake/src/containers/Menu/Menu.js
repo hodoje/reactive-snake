@@ -132,7 +132,7 @@ const Menu = (props) => {
                 {display}
             </div>
             <div>
-                <h3 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Controls</h3>
+                <h3 className={[classes.WhiteText, classes.NoSelect, classes.ControlsHeading].join(' ')}>Controls</h3>
                 <div className={classes.Controls}>
                     {leftControlForm}
                     {upControlForm}
@@ -141,7 +141,7 @@ const Menu = (props) => {
                 </div>
             </div>
             <div>
-                <h3 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Difficulty</h3>
+                <h3 className={[classes.WhiteText, classes.NoSelect, classes.DifficultyHeading].join(' ')}>Difficulty</h3>
                 <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
                 <RangeSlider 
                     background="rgb(147,255,25)" 
