@@ -6,7 +6,7 @@ import Canvas from '../../components/Canvas/Canvas';
 import Food from './Models/food';
 import SnakeClass from './Models/snake';
 import * as actions from '../../store/actions/actions';
-import { canvasSettings, figureStyles } from '../../shared/gameSettings';
+import { generalSettings, figureStyles } from '../../shared/gameSettings';
 import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
 
 const Snake = () => {
@@ -28,26 +28,58 @@ const Snake = () => {
 
     const eatFood = useCallback(
         () => {
-            dispatch(actions.eatFood())
+            dispatch(actions.eatFood());
+        }, [dispatch]
+    );
+
+    const eatBonusFood = useCallback(
+        () => {
+            dispatch(actions.eatBonusFood());
         }, [dispatch]
     );
 
     const frameRate = speed.speed;
-    const canvasWidth = canvasSettings.canvasWidth;
-    const canvasHeight = canvasSettings.canvasHeight;
-    const scale = canvasSettings.scale;
+    const canvasWidth = generalSettings.canvasWidth;
+    const canvasHeight = generalSettings.canvasHeight;
+    const scale = generalSettings.scale;
     const cols = Math.floor(canvasWidth / scale);
     const rows = Math.floor(canvasHeight / scale);
+    const wallsMap = [];
     const snakee = new SnakeClass(
-        canvasSettings.canvasWidth, 
-        canvasSettings.canvasHeight, 
-        canvasSettings.scale,
+        generalSettings.canvasWidth, 
+        generalSettings.canvasHeight, 
+        generalSettings.scale,
         leftControl, 
         upControl, 
         rightControl, 
         downControl);
-    const food = new Food(cols, rows, scale, endGame);
-    const wallsMap = [];
+    const food = new Food(
+        cols, 
+        rows, 
+        scale, 
+        figureStyles.food.fill, 
+        figureStyles.food.stroke, 
+        endGame);
+
+    const bonusFood = new Food(
+        cols, 
+        rows, 
+        scale, 
+        figureStyles.bonusFood.fill, 
+        figureStyles.bonusFood.stroke, 
+        endGame);
+    const bonusFoodSpawnInterval = generalSettings.bonusFoodSpawnInterval;
+    const bonusFoodSpawnDuration = generalSettings.bonusFoodSpawnDuration;
+    let start;
+    let bonusFoodTime;
+    let isBonusFoodSpawned = false;
+
+    const resetBonusFood = () => {
+        bonusFood.x = Number.MIN_SAFE_INTEGER;
+        bonusFood.y = Number.MIN_SAFE_INTEGER;
+        isBonusFoodSpawned = false;
+        start = Date.now();
+    }
 
     const pickWallsLocation = useCallback(
         () => {
@@ -110,47 +142,74 @@ const Snake = () => {
                 drawWalls(ctx);
                 // draw the snake
                 if (snakee.death(wallsMap)) {
-                    snakee.show(ctx);
                     endGame();
                     return;
                 }
                 snakee.update();
                 snakee.show(ctx);
                 
-                // check if snake is eating
+                // check if snake ate food
                 if (snakee.eat(food, eatFood)) {
-                    food.setFoodSpawnPoint(ctx, snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
+                    food.setFoodSpawnPoint(snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
                 }
-                
+
+                // check if snake ate bonus food
+                if (snakee.eat(bonusFood, eatBonusFood)) {
+                    resetBonusFood();
+                }
+
                 // draw the food
                 food.show(ctx);
+
+                // should draw bonus food
+                let now = Date.now();
+                if (now - start > bonusFoodSpawnInterval) {
+                    if (!isBonusFoodSpawned) {
+                        bonusFood.setFoodSpawnPoint(snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
+                        isBonusFoodSpawned = true;
+                        bonusFoodTime = Date.now();
+                    }
+                }
+                if (isBonusFoodSpawned) {
+                    if (now - bonusFoodTime > bonusFoodSpawnDuration) {
+                        resetBonusFood()
+                        bonusFoodTime = now;
+                    }
+                    bonusFood.show(ctx);
+                }
+
             }
         }
     }
 
     const draw = (ctx) => {
         // draw the grid
-        drawVerticalGridLines(ctx, canvasSettings.stroke);
-        drawHorizontalGridLines(ctx, canvasSettings.stroke);
+        drawVerticalGridLines(ctx, generalSettings.stroke);
+        drawHorizontalGridLines(ctx, generalSettings.stroke);
         snakeGameLifecycle(ctx);
     }
 
     const setup = useCallback(
         () => {
             pickWallsLocation();
-            food.setFoodSpawnPoint(null, snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
-        }, [pickWallsLocation, snakee, wallsMap, food]    
+            food.setFoodSpawnPoint(snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
+            bonusFood.setFoodSpawnPoint(snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            start = Date.now();
+        }, [pickWallsLocation, snakee, wallsMap, food, bonusFood]    
     );
 
     useEffect(() => {
+        document.removeEventListener('keydown', snakee.getDirection);
         document.addEventListener('keydown', snakee.getDirection);
-
-        setup();
-
         return () => {
             document.removeEventListener('keydown', snakee.getDirection);
         }
-    }, [setup, snakee.getDirection]);
+    }, [snakee.getDirection]);
+
+    useEffect(() => {
+        setup();        
+    }, [setup])
 
     return (
         <div className={classes.Snake}>
