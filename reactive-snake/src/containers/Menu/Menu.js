@@ -144,7 +144,7 @@ const Menu = (props) => {
                 <h3 className={[classes.WhiteText, classes.NoSelect, classes.DifficultyHeading].join(' ')}>Difficulty</h3>
                 <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
                 <RangeSlider 
-                    background="rgb(147,255,25)" 
+                    background="rgba(147,255,25, 1)" 
                     labels={['easy', 'medium', 'hard']}
                     width="300px" 
                     height="6px" 
@@ -156,7 +156,7 @@ const Menu = (props) => {
                 <br/>
                 <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
                 <RangeSlider 
-                    background="rgb(255,0,128)" 
+                    background="rgba(255,0,128, 1)" 
                     labels={['easy', 'medium', 'hard']}
                     width="300px" 
                     height="6px" 
