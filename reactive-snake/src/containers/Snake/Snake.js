@@ -74,12 +74,16 @@ const Snake = () => {
     let bonusFoodTime;
     let isBonusFoodSpawned = false;
 
-    const resetBonusFood = () => {
-        bonusFood.x = Number.MIN_SAFE_INTEGER;
-        bonusFood.y = Number.MIN_SAFE_INTEGER;
-        isBonusFoodSpawned = false;
-        start = Date.now();
-    }
+    const resetBonusFood = useCallback(
+        () => {
+            bonusFood.x = Number.MIN_SAFE_INTEGER;
+            bonusFood.y = Number.MIN_SAFE_INTEGER;
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            isBonusFoodSpawned = false;
+            // eslint-disable-next-line react-hooks/exhaustive-deps
+            start = Date.now();
+        }, [bonusFood, isBonusFoodSpawned, start]
+    );
 
     const pickWallsLocation = useCallback(
         () => {
@@ -193,10 +197,8 @@ const Snake = () => {
         () => {
             pickWallsLocation();
             food.setFoodSpawnPoint(snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
-            bonusFood.setFoodSpawnPoint(snakee.getSnakeHead(), snakee.getSnakeTail(), wallsMap);
-            // eslint-disable-next-line react-hooks/exhaustive-deps
-            start = Date.now();
-        }, [pickWallsLocation, snakee, wallsMap, food, bonusFood]    
+            resetBonusFood();
+        }, [pickWallsLocation, snakee, wallsMap, food, resetBonusFood]    
     );
 
     useEffect(() => {
