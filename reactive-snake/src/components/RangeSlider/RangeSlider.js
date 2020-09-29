@@ -7,17 +7,24 @@ const RangeSlider = (props) => {
 
     const { background, labels, min, max, step, width, height, initialValue, onChange } = props;
 
+    const style = {
+        background: background,
+        width: width,
+        height: height,
+        boxShadow: `0 0 10px ${background}`,
+    }
+
     return (
         <div className={classes.SlideContainer}>
             <div 
-                className={classes.SliderLabels}
+                className={classes.SliderLabelsContainer}
                 style={
                     {
                         width: width
                     }
                 }>
                 <Aux>
-                    {labels.map(l => <span key={l}>{l}</span>)}
+                    {labels.map(l => <span key={l} className={classes.SliderLabel}>{l}</span>)}
                 </Aux>
             </div>
             <input 
@@ -28,13 +35,7 @@ const RangeSlider = (props) => {
                 className={classes.Slider}
                 defaultValue={initialValue}
                 onChange={onChange}
-                style={
-                    {
-                        background: background,
-                        width: width,
-                        height: height
-                    }
-                }/>
+                style={style}/>
         </div>
     );
 };

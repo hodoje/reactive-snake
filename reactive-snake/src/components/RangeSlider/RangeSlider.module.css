@@ -10,12 +10,12 @@
     -webkit-transition: 0.2s;
     transition: opacity 0.2s;
     border-radius: 12px;
-    box-shadow: 0px 0px 10px 1px black;
+    /* box-shadow: 0 0 5px rgba(255, 0, 128, .7); */
 }
 
 .Slider:hover {
     opacity: 1;
-    box-shadow: 0px 0px 15px 1px black;
+    /* box-shadow: 0 0 10px rgba(255, 0, 128, 1); */
 }
 
 /* for Chrome */
@@ -27,6 +27,7 @@
     background: white;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 0 5px white;
 }
 
 .Slider::-moz-range-thumb {
@@ -35,12 +36,24 @@
     background: white;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 0 5px white;
 }
 
-.SliderLabels {
+.SliderLabelsContainer {
     color: white;
     font-size: 12px;
     margin: auto;
     display: flex;
     justify-content: space-between;
+}
+
+.SliderLabel {
+    text-shadow: 0 0 5px white;
+    -webkit-touch-callout: none; /* iOS Safari */
+      -webkit-user-select: none; /* Safari */
+       -khtml-user-select: none; /* Konqueror HTML */
+         -moz-user-select: none; /* Old versions of Firefox */
+          -ms-user-select: none; /* Internet Explorer/Edge */
+              user-select: none; /* Non-prefixed version, currently
+                                    supported by Chrome, Edge, Opera and Firefox */
 }

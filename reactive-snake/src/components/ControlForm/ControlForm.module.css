@@ -9,19 +9,28 @@
     font-weight: 900;
     text-align: center;
     padding: 0;
+    border: 0;
     background: rgba(255, 255, 255, 1);
+    box-shadow: 0 0 5px rgba(255, 255, 255, .7);
 }
 
 .Button:hover {
-    box-shadow: 0 0 10px rgba(0, 0, 0, .7);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
 }
 
 .Button:focus {
-    box-shadow: 0 0 10px rgba(0, 0, 0, .7);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 1);
 }
 
 .Direction {
     margin: auto;
     padding: 10px;
     color: white;
+    -webkit-filter: drop-shadow( 0 0 5px rgba(255, 255, 255, 1));
+    filter: drop-shadow( 0 0 5px rgba(255, 255, 255, 1));
+}
+
+.Input {
+    -webkit-filter: drop-shadow( 0 0 5px rgba(0, 0, 0, 1));
+    filter: drop-shadow( 0 0 5px rgba(0, 0, 0, 1));
 }
