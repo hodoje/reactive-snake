@@ -5,11 +5,15 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 
 import { Provider } from 'react-redux';
-import { createStore, applyMiddleware, compose } from 'redux';
+import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
-import reducer from './store/reducers/reducer';
+import gameReducer from './store/reducers/gameReducer';
+import controlsReducer from './store/reducers/controlsReducer';
 
-const rootReducer = reducer;
+const rootReducer = combineReducers({
+  game: gameReducer,
+  controls: controlsReducer
+});
 
 const store = createStore(rootReducer, compose(
   applyMiddleware(thunk)
