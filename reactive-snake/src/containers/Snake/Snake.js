@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './Snake.module.css';
 import Canvas from '../../components/Canvas/Canvas';
@@ -9,12 +9,23 @@ import * as actions from '../../store/actions/actions';
 import { canvasSettings, figureStyles } from '../../shared/gameSettings';
 import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
 
-const Snake = (props) => {    
-    const gameOver = props.gameOver;
-    const initialLoad = props.initialLoad;
-    const speed = props.speed;
-    const walls = props.walls;
-    const snakee = new SnakeClass(canvasSettings.canvasWidth, canvasSettings.canvasHeight, canvasSettings.scale);
+const Snake = () => {
+    const gameOver = useSelector(state => state.game.gameOver);
+    const initialLoad = useSelector(state => state.game.initialLoad);
+    const speed = useSelector(state => state.game.speed);
+    const walls = useSelector(state => state.game.walls);
+    const leftControl = useSelector(state => state.controls.leftControl);
+    const upControl = useSelector(state => state.controls.upControl);
+    const rightControl = useSelector(state => state.controls.rightControl);
+    const downControl = useSelector(state => state.controls.downControl);
+    const snakee = new SnakeClass(
+        canvasSettings.canvasWidth, 
+        canvasSettings.canvasHeight, 
+        canvasSettings.scale,
+        leftControl, 
+        upControl, 
+        rightControl, 
+        downControl);
     const dispatch = useDispatch();
 
     const endGame = useCallback(
