@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './Menu.module.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,19 +12,17 @@ import ControlForm from '../../components/ControlForm/ControlForm';
 import { faArrowUp, faArrowDown, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 const Menu = (props) => {
-    const { 
-        gameOver, 
-        initialLoad, 
-        currentScore, 
-        highscore, 
-        isNewHighscore,
-        speedGameMode,
-        wallsGameMode,
-        leftControl,
-        upControl,
-        rightControl,
-        downControl
-    } = props;
+    const gameOver = useSelector(state => state.game.gameOver);
+    const initialLoad = useSelector(state => state.game.initialLoad);
+    const currentScore = useSelector(state => state.game.currentScore);
+    const highscore = useSelector(state => state.game.highscore);
+    const isNewHighscore = useSelector(state => state.game.isNewHighscore);
+    const speedGameMode = useSelector(state => state.game.speedGameMode);
+    const wallsGameMode = useSelector(state => state.game.wallsGameMode);
+    const leftControl = useSelector(state => state.controls.leftControl);
+    const upControl = useSelector(state => state.controls.upControl);
+    const rightControl = useSelector(state => state.controls.rightControl);
+    const downControl = useSelector(state => state.controls.downControl);
     const dispatch = useDispatch();
     
     const startGame = () => {
@@ -134,7 +132,7 @@ const Menu = (props) => {
                 {display}
             </div>
             <div>
-                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Controls</h4>
+                <h3 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Controls</h3>
                 <div className={classes.Controls}>
                     {leftControlForm}
                     {upControlForm}
@@ -143,6 +141,7 @@ const Menu = (props) => {
                 </div>
             </div>
             <div>
+                <h3 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Difficulty</h3>
                 <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
                 <RangeSlider 
                     background="rgb(147,255,25)" 
