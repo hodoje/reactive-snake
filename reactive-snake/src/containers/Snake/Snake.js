@@ -144,6 +144,7 @@ const Snake = () => {
     useEffect(() => {
         document.addEventListener('keydown', snakee.getDirection);
 
+        console.log('render');
         setup();
 
         return () => {
@@ -158,6 +159,4 @@ const Snake = () => {
     );
 };
 
-export default React.memo(Snake, (props, nextProps) => {
-    return props.gameOver === nextProps.gameOver
-});
+export default Snake;
