@@ -48,7 +48,7 @@ const eatFood = (state, action) => {
 
 const eatBonusFood = (state, action) => {
     const points = state.speed.points + state.walls.points;
-    const bonusPoints = points + (state.speed.points + state.walls.points) * 0.5;
+    const bonusPoints = points + Math.floor((state.speed.points + state.walls.points) * 0.5);
     const newPoints = state.currentScore + bonusPoints;
     return updateObject(state, {
         currentScore: newPoints
