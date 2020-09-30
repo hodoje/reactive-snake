@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './Menu.module.css';
@@ -10,8 +10,10 @@ import RangeSlider from '../../components/RangeSlider/RangeSlider';
 import { gameModes } from '../../shared/gameSettings';
 import ControlForm from '../../components/ControlForm/ControlForm';
 import { faArrowUp, faArrowDown, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import Countdown from '../../components/Countdown/Countdown';
 
-const Menu = (props) => {
+const Menu = () => {
+    const [starting, setStarting] = useState(false);
     const gameOver = useSelector(state => state.game.gameOver);
     const initialLoad = useSelector(state => state.game.initialLoad);
     const currentScore = useSelector(state => state.game.currentScore);
@@ -25,6 +27,10 @@ const Menu = (props) => {
     const downControl = useSelector(state => state.controls.downControl);
     const dispatch = useDispatch();
     
+    const beginCountdown = () => {
+        setStarting(true);
+    }
+
     const startGame = () => {
         dispatch(actions.startGame());
     }
@@ -126,8 +132,8 @@ const Menu = (props) => {
     const rightControlForm = <ControlForm control={rightControl} direction={faArrowRight} onAssignKey={onRightControlSubmit}/>;
     const downControlForm = <ControlForm control={downControl} direction={faArrowDown} onAssignKey={onDownControlSubmit}/>;
 
-    return (
-        <div className={classList.join(' ')}>
+    let all = (
+        <Aux>
             <div>
                 {display}
             </div>
@@ -145,21 +151,13 @@ const Menu = (props) => {
                     </div>
                 </div>
             </div>
-            <div>
-                <h3 className={[classes.WhiteText, classes.NoSelect, classes.ControlsHeading].join(' ')}>Controls</h3>
-                <div className={classes.Controls}>
-                    {leftControlForm}
-                    {upControlForm}
-                    {rightControlForm}
-                    {downControlForm}
-                </div>
-            </div>
+
             <div>
                 <h3 className={[classes.WhiteText, classes.NoSelect, classes.DifficultyHeading].join(' ')}>Difficulty</h3>
                 <div className={classes.SpeedSettings}>
                     <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
                     <RangeSlider 
-                        background="rgba(147,255,25, 1)" 
+                        background="rgba(0, 0, 0, 1)" 
                         labels={['easy', 'medium', 'hard']}
                         width="300px" 
                         height="6px" 
@@ -172,7 +170,7 @@ const Menu = (props) => {
                 <div className={classes.WallsSettings}>
                     <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
                     <RangeSlider 
-                        background="rgba(255,0,128, 1)" 
+                        background="rgba(0, 0, 0, 1)" 
                         labels={['easy', 'medium', 'hard']}
                         width="300px" 
                         height="6px" 
@@ -184,8 +182,27 @@ const Menu = (props) => {
                 </div>
             </div>
             <div>
-                <FontAwesomeIcon icon={faPlay} className={buttonClasses.join(' ')} onClick={startGame}/>
+                <h3 className={[classes.WhiteText, classes.NoSelect, classes.ControlsHeading].join(' ')}>Controls</h3>
+                <div className={classes.Controls}>
+                    {leftControlForm}
+                    {upControlForm}
+                    {rightControlForm}
+                    {downControlForm}
+                </div>
             </div>
+            <div>
+                <FontAwesomeIcon icon={faPlay} className={buttonClasses.join(' ')} onClick={beginCountdown}/>
+            </div>
+        </Aux>
+    );
+
+    if (starting) {
+        all = <Countdown callback={startGame}/>
+    }
+
+    return (
+        <div className={classList.join(' ')}>
+            {all}
         </div>
     );
 };
