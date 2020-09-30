@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import classes from './Menu.module.css';
@@ -10,8 +10,10 @@ import RangeSlider from '../../components/RangeSlider/RangeSlider';
 import { gameModes } from '../../shared/gameSettings';
 import ControlForm from '../../components/ControlForm/ControlForm';
 import { faArrowUp, faArrowDown, faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import Countdown from '../../components/Countdown/Countdown';
 
-const Menu = (props) => {
+const Menu = () => {
+    const [starting, setStarting] = useState(false);
     const gameOver = useSelector(state => state.game.gameOver);
     const initialLoad = useSelector(state => state.game.initialLoad);
     const currentScore = useSelector(state => state.game.currentScore);
@@ -25,6 +27,10 @@ const Menu = (props) => {
     const downControl = useSelector(state => state.controls.downControl);
     const dispatch = useDispatch();
     
+    const beginCountdown = () => {
+        setStarting(true);
+    }
+
     const startGame = () => {
         dispatch(actions.startGame());
     }
@@ -126,13 +132,57 @@ const Menu = (props) => {
     const rightControlForm = <ControlForm control={rightControl} direction={faArrowRight} onAssignKey={onRightControlSubmit}/>;
     const downControlForm = <ControlForm control={downControl} direction={faArrowDown} onAssignKey={onDownControlSubmit}/>;
 
-    return (
-        <div className={classList.join(' ')}>
+    let all = (
+        <Aux>
             <div>
                 {display}
             </div>
             <div>
-                <h3 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Controls</h3>
+                <div className={classes.FoodContainer}>
+                    <div className={classes.FoodHolder}>
+                        <span className={[classes.WhiteText, classes.NoSelect].join(' ')}>Food</span>
+                        <br/>
+                        <div className={classes.Food} style={{background: '#FF0080', boxShadow: '0 0 10px #FF0080'}}></div>
+                    </div>
+                    <div className={classes.FoodHolder}>
+                        <span className={[classes.WhiteText, classes.NoSelect].join(' ')}>Bonus</span>
+                        <br/>
+                        <div className={classes.Food} style={{background: 'yellow', boxShadow: '0 0 10px yellow'}}></div>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 className={[classes.WhiteText, classes.NoSelect, classes.DifficultyHeading].join(' ')}>Difficulty</h3>
+                <div className={classes.SpeedSettings}>
+                    <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
+                    <RangeSlider 
+                        background="rgba(0, 0, 0, 1)" 
+                        labels={['easy', 'medium', 'hard']}
+                        width="300px" 
+                        height="6px" 
+                        min="1" 
+                        max="3" 
+                        step="1" 
+                        initialValue={speedGameMode.value} 
+                        onChange={onSpeedChange}/>
+                </div>                
+                <div className={classes.WallsSettings}>
+                    <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
+                    <RangeSlider 
+                        background="rgba(0, 0, 0, 1)" 
+                        labels={['easy', 'medium', 'hard']}
+                        width="300px" 
+                        height="6px" 
+                        min="1" 
+                        max="3" 
+                        step="1" 
+                        initialValue={wallsGameMode.value} 
+                        onChange={onWallsChange}/>
+                </div>
+            </div>
+            <div>
+                <h3 className={[classes.WhiteText, classes.NoSelect, classes.ControlsHeading].join(' ')}>Controls</h3>
                 <div className={classes.Controls}>
                     {leftControlForm}
                     {upControlForm}
@@ -141,34 +191,18 @@ const Menu = (props) => {
                 </div>
             </div>
             <div>
-                <h3 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Difficulty</h3>
-                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Speed</h4>
-                <RangeSlider 
-                    background="rgb(147,255,25)" 
-                    labels={['easy', 'medium', 'hard']}
-                    width="300px" 
-                    height="6px" 
-                    min="1" 
-                    max="3" 
-                    step="1" 
-                    initialValue={speedGameMode.value} 
-                    onChange={onSpeedChange}/>
-                <br/>
-                <h4 className={[classes.WhiteText, classes.NoSelect].join(' ')}>Walls</h4>
-                <RangeSlider 
-                    background="rgb(255,0,128)" 
-                    labels={['easy', 'medium', 'hard']}
-                    width="300px" 
-                    height="6px" 
-                    min="1" 
-                    max="3" 
-                    step="1" 
-                    initialValue={wallsGameMode.value} 
-                    onChange={onWallsChange}/>
+                <FontAwesomeIcon icon={faPlay} className={buttonClasses.join(' ')} onClick={beginCountdown}/>
             </div>
-            <div>
-                <FontAwesomeIcon icon={faPlay} className={buttonClasses.join(' ')} onClick={startGame}/>
-            </div>
+        </Aux>
+    );
+
+    if (starting) {
+        all = <Countdown callback={startGame}/>
+    }
+
+    return (
+        <div className={classList.join(' ')}>
+            {all}
         </div>
     );
 };

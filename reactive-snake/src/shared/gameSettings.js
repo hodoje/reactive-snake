@@ -1,12 +1,14 @@
 // this can be changed to track number of columns and then set the scale
 // ofc you should set these settings to give a round number of either columns
 // when it comes to current shape of the settings or round number for scale
-export const canvasSettings = Object.freeze(
+export const generalSettings = Object.freeze(
     {
         canvasWidth: 700,
         canvasHeight: 700,
         scale: 35,
-        stroke: 'white'
+        stroke: 'white',
+        bonusFoodSpawnInterval: 15000,
+        bonusFoodSpawnDuration: 5000
     }
 );
 
@@ -22,6 +24,10 @@ export const figureStyles = Object.freeze(
         },
         food: {
             fill: '#FF0080',
+            stroke: 'black'
+        },
+        bonusFood: {
+            fill: 'yellow',
             stroke: 'black'
         },
         wall: {
@@ -73,11 +79,11 @@ export const wallSettings = Object.freeze(
         },
         medium: {
             walls: 3,
-            points: 100
+            points: 35
         },
         hard: {
             walls: 6,
-            points: 150
+            points: 70
         }
     }
 );

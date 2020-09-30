@@ -69,14 +69,17 @@ export default class SnakeClass {
 
     show = (ctx) => {
         // draw the tail
-        
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = figureStyles.body.fill;
         ctx.fillStyle = figureStyles.body.fill;
         for (let i = 0; i < this.tail.length; i++) {
         
             ctx.fillRect(this.tail[i].x, this.tail[i].y, this.scale, this.scale);
         }
 
-        // draw the head        
+        // draw the head
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = figureStyles.head.fill;
         ctx.fillStyle = figureStyles.head.fill;        
         ctx.fillRect(this.x, this.y, this.scale, this.scale);
     }

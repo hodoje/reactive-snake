@@ -23,7 +23,14 @@ const ControlForm = (props) => {
     return (
         <div className={classes.Form}>
             <FontAwesomeIcon icon={direction} className={classes.Direction}/>
-            <button ref={buttonRef} className={classes.Button} onKeyDown={handleInput}></button>
+            <button 
+                className={classes.Button} 
+                onKeyDown={handleInput}>
+                    <span 
+                        ref={buttonRef} 
+                        className={classes.Input}>
+                    </span>
+            </button>
         </div>
     );
 };

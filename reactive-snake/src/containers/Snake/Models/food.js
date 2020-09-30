@@ -1,7 +1,7 @@
 import Point from '../Models/point';
 
 export default class Food {
-    constructor(cols, rows, scale, triggerEndGame) {
+    constructor(cols, rows, scale, fill, stroke, triggerEndGame) {
         this.x = 0;
         this.y = 0;
         this.pickLocationAttempt = 0;
@@ -10,6 +10,8 @@ export default class Food {
         this.rows = rows;
         this.scale = scale;
         this.triggerEndGame = triggerEndGame;
+        this.fill = fill;
+        this.stroke = stroke;
     }
 
     pickFoodLocationRandom = () => {
@@ -78,7 +80,7 @@ export default class Food {
         return location;
     }
 
-    pickFoodLocation = (ctx, snakeHead, snakeTail, wallsMap) => {
+    pickFoodLocation = (snakeHead, snakeTail, wallsMap) => {
         let newPos;
         // we want to pick a random location if that is possible since it is faaster
         // but if we get repeated hits on the snake body, we want to use a slower but 100% successful method
@@ -96,19 +98,28 @@ export default class Food {
 
         if (!this.checkIfFreeFoodLocation(newPos.x, newPos.y, snakeHead, snakeTail, wallsMap)) {
             this.pickLocationAttempt++;
-            this.pickFoodLocation(ctx, snakeHead, snakeTail, wallsMap);
+            this.pickFoodLocation(snakeHead, snakeTail, wallsMap);
         }
-        else {
+        else {            
             this.x = newPos.x;
             this.y = newPos.y;
             // eslint-disable-next-line react-hooks/exhaustive-deps
             this.pickLocationAttempt = 0;
         }
+
+        return true;
     }
 
-    setFoodSpawnPoint = (ctx, snakeHead, snakeTail, wallsMap) => {
-        if (this.pickFoodLocation(ctx, snakeHead, snakeTail, wallsMap)) {
+    setFoodSpawnPoint = (snakeHead, snakeTail, wallsMap) => {
+        if (!this.pickFoodLocation(snakeHead, snakeTail, wallsMap)) {
             this.triggerEndGame();
         }
+    }
+
+    show = (ctx) => {
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = this.fill;
+        ctx.fillStyle = this.fill;
+        ctx.fillRect(this.x, this.y, this.scale, this.scale);
     }
 }
