@@ -8,6 +8,7 @@ import SnakeClass from './Models/snake';
 import * as actions from '../../store/actions/actions';
 import { generalSettings, figureStyles } from '../../shared/gameSettings';
 import { randomLocationNearEdge, randomLocationNearMiddle } from '../../shared/utility';
+import background from '../../assets/img/background.png';
 
 const Snake = () => {
     const gameOver = useSelector(state => state.game.gameOver);
@@ -187,9 +188,6 @@ const Snake = () => {
     }
 
     const draw = (ctx) => {
-        // draw the grid
-        drawVerticalGridLines(ctx, generalSettings.stroke);
-        drawHorizontalGridLines(ctx, generalSettings.stroke);
         snakeGameLifecycle(ctx);
     }
 
@@ -200,6 +198,12 @@ const Snake = () => {
             resetBonusFood();
         }, [pickWallsLocation, snakee, wallsMap, food, resetBonusFood]    
     );
+
+    const backgroundDraw = (ctx) => {
+        // draw the grid
+        drawVerticalGridLines(ctx, generalSettings.stroke);
+        drawHorizontalGridLines(ctx, generalSettings.stroke);
+    }
 
     useEffect(() => {
         document.removeEventListener('keydown', snakee.getDirection);
@@ -215,6 +219,9 @@ const Snake = () => {
 
     return (
         <div className={classes.Snake}>
+            {/* <Canvas draw={backgroundDraw} width={canvasWidth} height={canvasHeight} frameRate={frameRate}/> */}
+            {/* using image as background for better performance */}
+            <img src={background} alt=''/>
             <Canvas draw={draw} width={canvasWidth} height={canvasHeight} frameRate={frameRate}/>
         </div>
     );
