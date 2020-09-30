@@ -112,25 +112,25 @@ const Snake = () => {
         }, [cols, rows, walls, wallsMap, canvasWidth, canvasHeight, scale]
     );
 
-    const drawHorizontalGridLines = (ctx, strokeStyle) => {
-        ctx.beginPath(); 
-        for (let y = 0; y <= canvasHeight; y += scale) {
-            ctx.moveTo(0, y);
-            ctx.lineTo(canvasWidth, y);
-        }
-        ctx.strokeStyle = strokeStyle;
-        ctx.stroke();
-    }
+    // const drawHorizontalGridLines = (ctx, strokeStyle) => {
+    //     ctx.beginPath(); 
+    //     for (let y = 0; y <= canvasHeight; y += scale) {
+    //         ctx.moveTo(0, y);
+    //         ctx.lineTo(canvasWidth, y);
+    //     }
+    //     ctx.strokeStyle = strokeStyle;
+    //     ctx.stroke();
+    // }
 
-    const drawVerticalGridLines = (ctx, strokeStyle) => {
-        ctx.beginPath(); 
-        for (let x = 0; x <= canvasWidth; x += scale) {
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, canvasHeight);
-        }
-        ctx.strokeStyle = strokeStyle;
-        ctx.stroke(); 
-    }
+    // const drawVerticalGridLines = (ctx, strokeStyle) => {
+    //     ctx.beginPath(); 
+    //     for (let x = 0; x <= canvasWidth; x += scale) {
+    //         ctx.moveTo(x, 0);
+    //         ctx.lineTo(x, canvasHeight);
+    //     }
+    //     ctx.strokeStyle = strokeStyle;
+    //     ctx.stroke(); 
+    // }
 
     const drawWalls = (ctx) => {
         ctx.shadowBlur = 10;
@@ -199,11 +199,11 @@ const Snake = () => {
         }, [pickWallsLocation, snakee, wallsMap, food, resetBonusFood]    
     );
 
-    const backgroundDraw = (ctx) => {
-        // draw the grid
-        drawVerticalGridLines(ctx, generalSettings.stroke);
-        drawHorizontalGridLines(ctx, generalSettings.stroke);
-    }
+    // const backgroundDraw = (ctx) => {
+    //     // draw the grid
+    //     drawVerticalGridLines(ctx, generalSettings.stroke);
+    //     drawHorizontalGridLines(ctx, generalSettings.stroke);
+    // }
 
     useEffect(() => {
         document.removeEventListener('keydown', snakee.getDirection);
