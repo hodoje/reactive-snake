@@ -1,0 +1,7 @@
+.Countdown {
+    color: white;
+    user-select: none;
+    text-shadow: 0 0 5px white;
+    margin-top: 35%;
+    font-size: 5rem;
+}
