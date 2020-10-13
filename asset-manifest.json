@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/reactive-snake/static/css/main.823323cf.chunk.css",
+    "main.js": "/reactive-snake/static/js/main.93d63818.chunk.js",
+    "main.js.map": "/reactive-snake/static/js/main.93d63818.chunk.js.map",
+    "runtime-main.js": "/reactive-snake/static/js/runtime-main.8bc17c1e.js",
+    "runtime-main.js.map": "/reactive-snake/static/js/runtime-main.8bc17c1e.js.map",
+    "static/js/2.5dfb4feb.chunk.js": "/reactive-snake/static/js/2.5dfb4feb.chunk.js",
+    "static/js/2.5dfb4feb.chunk.js.map": "/reactive-snake/static/js/2.5dfb4feb.chunk.js.map",
+    "index.html": "/reactive-snake/index.html",
+    "precache-manifest.cf23886919343ca09f4581a4f939734c.js": "/reactive-snake/precache-manifest.cf23886919343ca09f4581a4f939734c.js",
+    "service-worker.js": "/reactive-snake/service-worker.js",
+    "static/css/main.823323cf.chunk.css.map": "/reactive-snake/static/css/main.823323cf.chunk.css.map",
+    "static/js/2.5dfb4feb.chunk.js.LICENSE.txt": "/reactive-snake/static/js/2.5dfb4feb.chunk.js.LICENSE.txt",
+    "static/media/background.png": "/reactive-snake/static/media/background.0439cea2.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.8bc17c1e.js",
+    "static/js/2.5dfb4feb.chunk.js",
+    "static/css/main.823323cf.chunk.css",
+    "static/js/main.93d63818.chunk.js"
+  ]
+}
