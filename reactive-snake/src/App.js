@@ -1,12 +1,11 @@
 import React from 'react';
 import './App.css';
-
-import Layout from './hoc/Layout/Layout';
+import Game from './containers/Game/Game';
 
 const App = () => {
   return (
     <div className="App">
-      <Layout/>
+      <Game/>
     </div>
   );
 }

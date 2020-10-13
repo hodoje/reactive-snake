@@ -2,6 +2,10 @@
 
 Classical Snake Game made using React, Redux, and HTML5 Canvas.
 
+### Note: The game is made for desktop and laptop only. 
+
+Check it live at: https://hodoje.github.io/reactive-snake/
+
 ### The game implements these features
   - The snake grows by 1 "unit" when eating food
   - The snake dies (game over) by colliding with itself, wall or boundary
